@@ -18,7 +18,7 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 .card:hover{border-color:var(--bdh);transform:translateY(-3px);box-shadow:0 16px 36px -14px rgba(99,102,241,.28)}
 .grad{background:linear-gradient(135deg,#818cf8,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* ANIMATED VERIFICATION BADGES */
+/* ANIMATED BADGES */
 .seal-gold{background:linear-gradient(135deg,#f5d47f,var(--gold) 55%,#b8860b);box-shadow:0 0 12px rgba(232,185,63,.4);color:#241a02;animation:goldGlow 3s infinite alternate}
 @keyframes goldGlow{0%{box-shadow:0 0 6px rgba(232,185,63,.3)}100%{box-shadow:0 0 18px rgba(232,185,63,.7)}}
 
@@ -81,7 +81,8 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <div class="relative rounded-3xl p-8 sm:p-12 mb-8 overflow-hidden glass border border-indigo-500/15">
 <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full blur-3xl pointer-events-none" style="background:radial-gradient(circle,rgba(99,102,241,.2),transparent 70%)"></div>
 <div class="max-w-2xl relative">
-<span class="pill pill-live mb-4"><span class="dotp"></span>Tamper-proof, cryptographically verified ballots</span>
+<!-- SHORTENED PILL TEXT HERE -->
+<span class="pill pill-live mb-4"><span class="dotp"></span>Cryptographic Voting</span>
 <h1 class="disp text-3xl sm:text-5xl font-bold leading-tight mb-4">Institutional elections you can <span class="grad">verify</span></h1>
 <p style="color:var(--dim)" class="text-base sm:text-lg mb-8 leading-relaxed max-w-xl">Every ballot is hashed, chained and timestamped. Universities, clubs and organizations run transparent elections with instant, auditable results.</p>
 <div class="flex flex-wrap gap-3">
@@ -167,12 +168,12 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <div id="founder-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 <div class="glass p-6 sm:p-8 rounded-3xl"><h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="shield-alert" class="w-5 h-5" style="color:var(--gold)"></i>Verification rules</h3>
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs" style="color:#c7cae0">
-<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Hardcoded verification</strong>Only pre-registered founder emails qualify for the gold seal across the platform.</div>
-<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Persistent session</strong>Once claimed, the seal stays active on campaign creation and votes in this browser.</div>
-<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Admin powers</strong>Verified founders can delete any campaign and sign audit transactions.</div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">One-Time Setup</strong>Founder emails are claimed once. Account setup generates a permanent username and password.</div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Permanent Credentials</strong>Once registered, founders use their username & password for all future sign-ins.</div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Admin Authority</strong>Verified founders retain gold-seal status and platform management powers across sessions.</div>
 </div></div></div></section>
 
-<!-- VIEW: USER PROFILE & VERIFICATION CENTER -->
+<!-- VIEW: USER PROFILE -->
 <section id="view-profile" class="view hidden">
 <div class="max-w-4xl mx-auto space-y-8">
 <div class="glass p-6 sm:p-8 rounded-3xl relative overflow-hidden">
@@ -267,24 +268,35 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <div class="glass w-full max-w-md p-6 sm:p-8 rounded-3xl relative">
 <button onclick="closeAuthModal()" class="absolute top-4 right-4" style="color:var(--dim)"><i data-lucide="x" class="w-5 h-5"></i></button>
 <div class="flex border-b border-white/8 mb-6 gap-2">
-<button onclick="switchAuthTab('user')" id="tab-user" class="tab-btn on flex-1">Voter / manager</button>
-<button onclick="switchAuthTab('founder')" id="tab-founder" class="tab-btn flex-1">Founder claim</button></div>
+<button onclick="switchAuthTab('user')" id="tab-user" class="tab-btn on flex-1">Sign In</button>
+<button onclick="switchAuthTab('founder')" id="tab-founder" class="tab-btn flex-1">1st Time Founder Setup</button></div>
+
+<!-- USER / FOUNDER SIGN IN FORM -->
 <div id="auth-user">
-<p class="text-xs mb-4" style="color:var(--dim)">Sign in to launch elections and cast verified ballots.</p>
+<p class="text-xs mb-4" style="color:var(--dim)">Sign in with your email/username & password to launch elections or vote.</p>
 <button onclick="simulateGoogleLogin()" class="btn-g w-full py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 mb-4">
-<svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"/></svg>
+<svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"/></svg>
 Continue with Google</button>
-<div class="relative flex items-center justify-center my-4"><div class="border-t border-white/8 w-full"></div><span class="px-2 text-[10px] uppercase tracking-widest absolute" style="background:#12142b;color:var(--dim2)">or email</span></div>
+<div class="relative flex items-center justify-center my-4"><div class="border-t border-white/8 w-full"></div><span class="px-2 text-[10px] uppercase tracking-widest absolute" style="background:#12142b;color:var(--dim2)">or password</span></div>
 <form onsubmit="handleStandardAuth(event)" class="space-y-3">
-<input id="auth-name" required placeholder="Full name" class="inp w-full px-3.5 py-2.5 text-sm">
-<input id="auth-contact" required placeholder="Email or mobile" class="inp w-full px-3.5 py-2.5 text-sm">
-<button type="submit" class="btn-p w-full py-2.5 rounded-xl text-sm">Sign in / register</button>
+<input id="auth-contact" required placeholder="Email or Username" class="inp w-full px-3.5 py-2.5 text-sm">
+<input id="auth-pass" type="password" required placeholder="Password" class="inp w-full px-3.5 py-2.5 text-sm">
+<button type="submit" class="btn-p w-full py-2.5 rounded-xl text-sm">Sign In</button>
 </form></div>
+
+<!-- 1ST TIME FOUNDER CLAIM FORM -->
 <div id="auth-founder" class="hidden">
-<div class="p-3 rounded-xl mb-4 text-xs leading-relaxed" style="background:rgba(232,185,63,.1);border:1px solid rgba(232,185,63,.3);color:#f5d998"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i>Enter your pre-registered founder email to claim your profile and gold seal.</div>
+<div class="p-3 rounded-xl mb-4 text-xs leading-relaxed" style="background:rgba(232,185,63,.1);border:1px solid rgba(232,185,63,.3);color:#f5d998"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i>One-Time Claim: Enter your pre-registered founder email to create your permanent credentials.</div>
 <form onsubmit="handleFounderClaim(event)" class="space-y-3">
+<div>
+<label class="block text-[11px] mb-1" style="color:var(--dim)">Founder Registered Email</label>
 <input type="email" id="claim-email" required placeholder="you@domain.com" class="inp w-full px-3.5 py-2.5 text-sm font-mono">
-<button type="submit" class="btn-p w-full py-2.5 rounded-xl text-sm flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i>Claim founder profile</button>
+</div>
+<div>
+<label class="block text-[11px] mb-1" style="color:var(--dim)">Create Permanent Password</label>
+<input type="password" id="claim-pass" required placeholder="Create Password" class="inp w-full px-3.5 py-2.5 text-sm">
+</div>
+<button type="submit" class="btn-p w-full py-2.5 rounded-xl text-sm flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i>Claim & Create Founder Account</button>
 </form></div></div></div>
 
 <div id="confirm-modal" class="modal-wrap hidden" onclick="if(event.target===this)closeConfirm()">
@@ -303,12 +315,13 @@ Continue with Google</button>
 <span>Founders: Suprotim, Swarnava, Soham</span></div></footer>
 
 <script>
-const CO_FOUNDERS=[{name:"Suprotim Chatterjee",email:"suprotim2005@gmail.com",role:"Co-Founder & Tech Lead"},{name:"Swarnava",email:"swarnava357@gmail.com",role:"Co-Founder & Web3 Architect"},{name:"Soham",email:"sohamkolay77@gmail.com",role:"Co-Founder & Product Strategist"}];
+const CO_FOUNDERS=[{name:"Suprotim Chatterjee",email:"suprotim2005@gmail.com",role:"Co-Founder & Tech Lead",handle:"suprotim_founder"},{name:"Swarnava",email:"swarnava357@gmail.com",role:"Co-Founder & Web3 Architect",handle:"swarnava_founder"},{name:"Soham",email:"sohamkolay77@gmail.com",role:"Co-Founder & Product Strategist",handle:"soham_founder"}];
 const DEFAULT_CAMPAIGNS=[{id:"camp-001",institution:"Apex University Tech Council",title:"Student Body President & Tech Chair 2026",startDate:"2026-09-01T09:00",endDate:"2026-10-15T18:00",videoUrl:"https://www.youtube.com/embed/dQw4w9WgXcQ",createdBy:"Suprotim Chatterjee",creatorIsFounder:true,candidates:[{id:"cand-1",name:"David Chen",bio:"Senior CS major focused on open-source campus lab tools and AI research grants.",avatar:"David",votes:42},{id:"cand-2",name:"Sarah Jenkins",bio:"EE junior advocating for transparent club funding via web3 ledgers.",avatar:"Sarah",votes:38},{id:"cand-3",name:"Marcus Vance",bio:"Information Systems senior prioritizing cybersecurity workshops and mentorship.",avatar:"Marcus",votes:19}]},{id:"camp-002",institution:"Global Web3 Developers Club",title:"Lead Community Steward Election",startDate:"2026-09-20T10:00",endDate:"2026-11-01T20:00",videoUrl:"",createdBy:"Swarnava",creatorIsFounder:true,candidates:[{id:"cand-10",name:"Elena Rostova",bio:"Smart contract developer and hackathon organizer.",avatar:"Elena",votes:85},{id:"cand-20",name:"Kofi Arhin",bio:"DeFi researcher and protocol contributor.",avatar:"Kofi",votes:64}]}];
 
 let campaigns=JSON.parse(localStorage.getItem('dv_campaigns'))||DEFAULT_CAMPAIGNS;
 let ledgerLogs=JSON.parse(localStorage.getItem('dv_ledger'))||[];
 let currentUser=JSON.parse(localStorage.getItem('dv_user'))||null;
+let registeredFounders=JSON.parse(localStorage.getItem('dv_claimed_founders'))||{};
 let votes=JSON.parse(localStorage.getItem('dv_votes'))||{};
 let generatedOtps={email:null,mobile:null};
 let activeFilter='all',chartInstance=null,confirmCb=null;
@@ -326,7 +339,7 @@ window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>lucide.createIcons(),5
 }
 
 function checkIsFounder(email){return !!email&&CO_FOUNDERS.some(f=>f.email.toLowerCase()===email.toLowerCase())}
-function persist(){localStorage.setItem('dv_campaigns',JSON.stringify(campaigns));localStorage.setItem('dv_ledger',JSON.stringify(ledgerLogs));localStorage.setItem('dv_votes',JSON.stringify(votes));if(currentUser)localStorage.setItem('dv_user',JSON.stringify(currentUser))}
+function persist(){localStorage.setItem('dv_campaigns',JSON.stringify(campaigns));localStorage.setItem('dv_ledger',JSON.stringify(ledgerLogs));localStorage.setItem('dv_votes',JSON.stringify(votes));localStorage.setItem('dv_claimed_founders',JSON.stringify(registeredFounders));if(currentUser)localStorage.setItem('dv_user',JSON.stringify(currentUser))}
 function canManage(c){return currentUser&&(currentUser.isFounder||currentUser.name===c.createdBy)}
 function timeLeft(target){const d=new Date(target)-new Date();if(d<=0)return null;const days=Math.floor(d/864e5),hrs=Math.floor(d%864e5/36e5),mins=Math.floor(d%36e5/6e4);return days>0?`${days}d ${hrs}h`:hrs>0?`${hrs}h ${mins}m`:`${mins}m`}
 
@@ -359,22 +372,98 @@ document.getElementById('tab-founder').classList.toggle('on',tab==='founder');
 document.getElementById('auth-user').classList.toggle('hidden',tab!=='user');
 document.getElementById('auth-founder').classList.toggle('hidden',tab!=='founder');
 }
-function handleStandardAuth(e){e.preventDefault();const name=document.getElementById('auth-name').value,contact=document.getElementById('auth-contact').value;
-currentUser={name,email:contact,isFounder:checkIsFounder(contact),isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};persist();updateUserNav();closeAuthModal();showToast(`Welcome, ${currentUser.name}!`,"success");}
-function simulateGoogleLogin(){currentUser={name:"Alex Mercer",email:"alex.mercer@gmail.com",isFounder:false,isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};persist();updateUserNav();closeAuthModal();showToast("Authenticated via Google","success");}
-function handleFounderClaim(e){e.preventDefault();claimAdminDirect(document.getElementById('claim-email').value.trim());}
-function claimAdminDirect(email,nameOverride=null){
-const f=CO_FOUNDERS.find(x=>x.email.toLowerCase()===email.toLowerCase());
-if(f){currentUser={name:nameOverride||f.name,email:f.email,isFounder:true,isVerified:true,emailVerified:true,mobileVerified:true,wallet:null,bio:'',twitter:'',github:''};persist();updateUserNav();closeAuthModal();showToast("Founder profile claimed — gold seal active","success");switchView('founder');}
-else showToast("Email not found in founder registry","error");
+
+/* STANDARD AUTH & SIGN-IN LOGIC */
+function handleStandardAuth(e){
+e.preventDefault();
+const contact=document.getElementById('auth-contact').value.trim();
+const pass=document.getElementById('auth-pass').value;
+
+// Check if founder logging in with generated handle/email
+let foundKey=Object.keys(registeredFounders).find(k=>k.toLowerCase()===contact.toLowerCase()||registeredFounders[k].username.toLowerCase()===contact.toLowerCase());
+
+if(foundKey){
+let founderAcc=registeredFounders[foundKey];
+if(founderAcc.password===pass){
+currentUser=founderAcc;
+persist();
+updateUserNav();
+closeAuthModal();
+showToast(`Welcome back, Founder ${currentUser.name}!`,"success");
+return;
+}else{
+showToast("Incorrect password for founder account","error");
+return;
 }
+}
+
+// Standard user authentication
+currentUser={name:contact.split('@')[0]||contact,email:contact,isFounder:false,isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};
+persist();
+updateUserNav();
+closeAuthModal();
+showToast(`Welcome, ${currentUser.name}!`,"success");
+}
+
+function simulateGoogleLogin(){
+currentUser={name:"Alex Mercer",email:"alex.mercer@gmail.com",isFounder:false,isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};
+persist();
+updateUserNav();
+closeAuthModal();
+showToast("Authenticated via Google","success");
+}
+
+/* 1ST TIME PERMANENT FOUNDER CLAIM LOGIC */
+function handleFounderClaim(e){
+e.preventDefault();
+const email=document.getElementById('claim-email').value.trim().toLowerCase();
+const pass=document.getElementById('claim-pass').value;
+
+const founderDef=CO_FOUNDERS.find(f=>f.email.toLowerCase()===email);
+if(!founderDef){
+showToast("Email address not found in authorized Founder Roster.","error");
+return;
+}
+
+if(registeredFounders[email]){
+showToast("This founder email has already been claimed! Please sign in using your username & password.","error");
+switchAuthTab('user');
+document.getElementById('auth-contact').value=registeredFounders[email].username;
+return;
+}
+
+// Create permanent founder account
+const newFounderAcc={
+name:founderDef.name,
+email:founderDef.email,
+username:founderDef.handle,
+password:pass,
+isFounder:true,
+isVerified:true,
+emailVerified:true,
+mobileVerified:true,
+wallet:null,
+bio:`Co-Founder of DecentraVote (${founderDef.role})`,
+twitter:`@${founderDef.handle}`,
+github:founderDef.handle
+};
+
+registeredFounders[email]=newFounderAcc;
+currentUser=newFounderAcc;
+persist();
+updateUserNav();
+closeAuthModal();
+showToast(`Founder profile claimed! Your permanent username is @${newFounderAcc.username}`,"success");
+switchView('founder');
+}
+
 function logoutUser(){currentUser=null;localStorage.removeItem('dv_user');updateUserNav();showToast("Signed out","info");switchView('explore');}
 
-/* PROFILE & OTP VERIFICATION LOGIC */
+/* PROFILE & VERIFICATION LOGIC */
 function renderProfileView(){
 if(!currentUser){switchView('explore');openAuthModal();return;}
 document.getElementById('prof-name').innerHTML=`${currentUser.name} ${getBadgeHTML(currentUser)}`;
-document.getElementById('prof-username').textContent=`@${currentUser.name.toLowerCase().replace(/\s+/g,'_')}`;
+document.getElementById('prof-username').textContent=`@${currentUser.username||currentUser.name.toLowerCase().replace(/\s+/g,'_')}`;
 document.getElementById('prof-bio').textContent=currentUser.bio||"No description provided yet.";
 document.getElementById('prof-avatar').src=currentUser.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}`;
 
@@ -452,13 +541,17 @@ showToast("Profile details updated!","success");
 }
 
 function renderFounders(){
-document.getElementById('founder-grid').innerHTML=CO_FOUNDERS.map(f=>`
+document.getElementById('founder-grid').innerHTML=CO_FOUNDERS.map(f=>{
+const isClaimed=!!registeredFounders[f.email.toLowerCase()];
+const handleText=isClaimed?`@${registeredFounders[f.email.toLowerCase()].username}`:`Claim pending`;
+return `
 <div class="card p-6 relative overflow-hidden">
 <div class="flex items-start gap-4"><div class="relative"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${f.name}" class="w-16 h-16 rounded-2xl bg-black/30 p-1 border border-white/10">
 <div class="absolute -bottom-1 -right-1 seal-gold rounded-full p-1"><i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i></div></div>
-<div><h3 class="text-lg font-bold">${f.name}</h3><p class="text-xs font-semibold mb-1" style="color:var(--gold)">${f.role}</p><p class="text-xs font-mono" style="color:var(--dim)">${f.email}</p></div></div>
+<div><h3 class="text-lg font-bold">${f.name}</h3><p class="text-xs font-semibold mb-1" style="color:var(--gold)">${f.role}</p><p class="text-xs font-mono" style="color:var(--dim)">${handleText}</p></div></div>
 <div class="mt-6 pt-4 border-t border-white/8 flex items-center justify-between text-xs" style="color:var(--dim)"><span>Status: <strong style="color:var(--gold)">Verified admin</strong></span>
-<button onclick="claimAdminDirect('${f.email}','${f.name}')" class="hover:underline" style="color:#a5b4fc">Claim profile</button></div></div>`).join('');
+${!isClaimed?`<button onclick="openAuthModal();switchAuthTab('founder');document.getElementById('claim-email').value='${f.email}';" class="hover:underline" style="color:#a5b4fc">1st Time Setup</button>`:`<span class="text-emerald-400 font-semibold">Account Claimed</span>`}</div></div>`;
+}).join('');
 lucide.createIcons();
 }
 
