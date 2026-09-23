@@ -14,7 +14,7 @@
 body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,var(--bg2),var(--bg) 60%);color:var(--tx);overflow-x:hidden;min-height:100vh;margin:0}
 
 /* Canvas background setup */
-#bubble-canvas {
+#vote-canvas {
   position: fixed;
   top: 0;
   left: 0;
@@ -65,8 +65,8 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 </head>
 <body class="min-h-screen flex flex-col">
 
-<!-- Background Interactive Canvas -->
-<canvas id="bubble-canvas"></canvas>
+<!-- Background Dynamic Canvas -->
+<canvas id="vote-canvas"></canvas>
 
 <header class="sticky top-0 z-40 glass border-b border-white/5">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
@@ -96,7 +96,6 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <div class="relative rounded-3xl p-8 sm:p-12 mb-8 overflow-hidden glass border border-indigo-500/15">
 <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full blur-3xl pointer-events-none" style="background:radial-gradient(circle,rgba(99,102,241,.2),transparent 70%)"></div>
 <div class="max-w-2xl relative">
-<!-- SHORTENED PILL TEXT HERE -->
 <span class="pill pill-live mb-4"><span class="dotp"></span>Cryptographic Voting</span>
 <h1 class="disp text-3xl sm:text-5xl font-bold leading-tight mb-4">Institutional elections you can <span class="grad">verify</span></h1>
 <p style="color:var(--dim)" class="text-base sm:text-lg mb-8 leading-relaxed max-w-xl">Every ballot is hashed, chained and timestamped. Universities, clubs and organizations run transparent elections with instant, auditable results.</p>
@@ -341,9 +340,9 @@ let votes=JSON.parse(localStorage.getItem('dv_votes'))||{};
 let generatedOtps={email:null,mobile:null};
 let activeFilter='all',chartInstance=null,confirmCb=null;
 
-/* CANVAS BUBBLE FIELD IMPLEMENTATION */
-(function setupBubbleCanvas() {
-  const canvas = document.getElementById('bubble-canvas');
+/* VOTE PIC BACKGROUND CANVAS IMPLEMENTATION */
+(function setupVoteCanvas() {
+  const canvas = document.getElementById('vote-canvas');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
 
@@ -357,7 +356,7 @@ let activeFilter='all',chartInstance=null,confirmCb=null;
     height = canvas.height = window.innerHeight;
   });
 
-  const mouse = { x: -1000, y: -1000, radius: 120 };
+  const mouse = { x: -1000, y: -1000, radius: 140 };
 
   window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
@@ -369,7 +368,6 @@ let activeFilter='all',chartInstance=null,confirmCb=null;
     mouse.y = -1000;
   });
 
-  // Color Palette from theme variables
   const colors = [
     { r: 99,  g: 102, b: 241 }, // Indigo (#6366f1)
     { r: 168, g: 85,  b: 247 }, // Violet (#a855f7)
@@ -377,20 +375,43 @@ let activeFilter='all',chartInstance=null,confirmCb=null;
     { r: 56,  g: 189, b: 248 }  // Cyan (#38bdf8)
   ];
 
-  class Bubble {
+  // Load transparent Vote Box PNG
+  const voteImg = new Image();
+  voteImg.src = 'vote-removebg-preview.png';
+
+  let coloredCanvases = [];
+
+  voteImg.onload = () => {
+    // Generate tinted versions matching the palette
+    colors.forEach(col => {
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = voteImg.width;
+      offCanvas.height = voteImg.height;
+      const offCtx = offCanvas.getContext('2d');
+
+      offCtx.drawImage(voteImg, 0, 0);
+      offCtx.globalCompositeOperation = 'source-in';
+      offCtx.fillStyle = `rgb(${col.r}, ${col.g}, ${col.b})`;
+      offCtx.fillRect(0, 0, voteImg.width, voteImg.height);
+
+      coloredCanvases.push(offCanvas);
+    });
+  };
+
+  class VoteParticle {
     constructor() {
       this.reset(true);
     }
 
     reset(initial = false) {
       this.x = Math.random() * width;
-      this.y = initial ? Math.random() * height : height + Math.random() * 20 + 10;
-      this.radius = Math.random() * 12 + 4;
-      this.speed = Math.random() * 0.4 + 0.2;
+      this.y = initial ? Math.random() * height : height + Math.random() * 40 + 20;
+      this.size = Math.random() * 24 + 20; // Particle dimensions
+      this.speed = Math.random() * 0.45 + 0.2;
       this.wobbleSpeed = Math.random() * 0.02 + 0.005;
       this.wobbleAmp = Math.random() * 1.5 + 0.5;
       this.angle = Math.random() * Math.PI * 2;
-      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.colorIndex = Math.floor(Math.random() * colors.length);
       this.alpha = Math.random() * 0.35 + 0.15;
       this.vx = 0;
       this.vy = 0;
@@ -399,14 +420,14 @@ let activeFilter='all',chartInstance=null,confirmCb=null;
     update() {
       if (prefersReducedMotion.matches) return;
 
-      // Slow drift upward
+      // Drift upward
       this.y -= this.speed;
-      
-      // Wobble side to side
+
+      // Side-to-side wobble
       this.angle += this.wobbleSpeed;
       const wobbleX = Math.sin(this.angle) * this.wobbleAmp;
 
-      // Interaction around mouse (gently parts away)
+      // Cursor interaction (gentle deflection)
       const dx = this.x - mouse.x;
       const dy = this.y - mouse.y;
       const dist = Math.hypot(dx, dy);
@@ -414,39 +435,51 @@ let activeFilter='all',chartInstance=null,confirmCb=null;
       if (dist < mouse.radius && dist > 0) {
         const force = (mouse.radius - dist) / mouse.radius;
         const angle = Math.atan2(dy, dx);
-        this.vx += Math.cos(angle) * force * 0.8;
-        this.vy += Math.sin(angle) * force * 0.8;
+        this.vx += Math.cos(angle) * force * 0.9;
+        this.vy += Math.sin(angle) * force * 0.9;
       }
 
-      // Apply displacement & friction
+      // Displacement & friction
       this.x += wobbleX + this.vx;
       this.y += this.vy;
       this.vx *= 0.92;
       this.vy *= 0.92;
 
-      // Reset when floating off the top or sides
-      if (this.y < -this.radius || this.x < -20 || this.x > width + 20) {
+      // Reset when floating off top or horizontal bounds
+      if (this.y < -60 || this.x < -40 || this.x > width + 40) {
         this.reset(false);
       }
     }
 
     draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`;
-      ctx.fill();
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+
+      if (coloredCanvases.length > 0) {
+        const imgCanvas = coloredCanvases[this.colorIndex];
+        ctx.drawImage(imgCanvas, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+      } else {
+        // Fallback vector icon representation prior to image load
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+        const col = colors[this.colorIndex];
+        ctx.fillStyle = `rgb(${col.r}, ${col.g}, ${col.b})`;
+        ctx.fill();
+      }
+
+      ctx.restore();
     }
   }
 
-  const bubbleCount = Math.min(Math.floor((width * height) / 12000), 70);
-  const bubbles = Array.from({ length: bubbleCount }, () => new Bubble());
+  const particleCount = Math.min(Math.floor((width * height) / 16000), 50);
+  const particles = Array.from({ length: particleCount }, () => new VoteParticle());
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
 
-    for (let i = 0; i < bubbles.length; i++) {
-      bubbles[i].update();
-      bubbles[i].draw();
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
     }
 
     requestAnimationFrame(animate);
@@ -508,7 +541,6 @@ e.preventDefault();
 const contact=document.getElementById('auth-contact').value.trim();
 const pass=document.getElementById('auth-pass').value;
 
-// Check if founder logging in with generated handle/email
 let foundKey=Object.keys(registeredFounders).find(k=>k.toLowerCase()===contact.toLowerCase()||registeredFounders[k].username.toLowerCase()===contact.toLowerCase());
 
 if(foundKey){
@@ -526,7 +558,6 @@ return;
 }
 }
 
-// Standard user authentication
 currentUser={name:contact.split('@')[0]||contact,email:contact,isFounder:false,isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};
 persist();
 updateUserNav();
@@ -561,7 +592,6 @@ document.getElementById('auth-contact').value=registeredFounders[email].username
 return;
 }
 
-// Create permanent founder account
 const newFounderAcc={
 name:founderDef.name,
 email:founderDef.email,
