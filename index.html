@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap');
-:root{--bg:#05060f;--bg2:#0a0c22;--surf:rgba(19,21,42,.58);--surf2:rgba(26,28,56,.68);--bd:rgba(255,255,255,.08);--bdh:rgba(129,140,248,.4);--tx:#f2f3fb;--dim:#9296ba;--dim2:#666a90;--indigo:#6366f1;--violet:#a855f7;--gold:#e8b93f;--live:#34d399;--danger:#f87171;--amber:#fbbf24}
+:root{--bg:#05060f;--bg2:#0a0c22;--surf:rgba(19,21,42,.58);--surf2:rgba(26,28,56,.68);--bd:rgba(255,255,255,.08);--bdh:rgba(129,140,248,.4);--tx:#f2f3fb;--dim:#9296ba;--dim2:#666a90;--indigo:#6366f1;--violet:#a855f7;--gold:#e8b93f;--cyan:#38bdf8;--live:#34d399;--danger:#f87171;--amber:#fbbf24}
 *{box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,var(--bg2),var(--bg) 60%);color:var(--tx);overflow-x:hidden;min-height:100vh;margin:0}
 .disp{font-family:'Fraunces',serif}
@@ -17,7 +17,14 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 .card{background:var(--surf2);backdrop-filter:blur(14px);border:1px solid var(--bd);transition:all .35s cubic-bezier(.16,1,.3,1);border-radius:1.5rem}
 .card:hover{border-color:var(--bdh);transform:translateY(-3px);box-shadow:0 16px 36px -14px rgba(99,102,241,.28)}
 .grad{background:linear-gradient(135deg,#818cf8,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.seal{background:linear-gradient(135deg,#f5d47f,var(--gold) 55%,#b8860b);box-shadow:0 0 0 3px rgba(232,185,63,.15),0 2px 8px rgba(0,0,0,.4);color:#241a02}
+
+/* ANIMATED VERIFICATION BADGES */
+.seal-gold{background:linear-gradient(135deg,#f5d47f,var(--gold) 55%,#b8860b);box-shadow:0 0 12px rgba(232,185,63,.4);color:#241a02;animation:goldGlow 3s infinite alternate}
+@keyframes goldGlow{0%{box-shadow:0 0 6px rgba(232,185,63,.3)}100%{box-shadow:0 0 18px rgba(232,185,63,.7)}}
+
+.seal-blue{background:linear-gradient(135deg,#38bdf8,#0284c7);box-shadow:0 0 12px rgba(56,189,248,.4);color:#031525;animation:bluePulse 2.5s infinite alternate}
+@keyframes bluePulse{0%{box-shadow:0 0 5px rgba(56,189,248,.3);transform:scale(1)}100%{box-shadow:0 0 16px rgba(56,189,248,.6);transform:scale(1.04)}}
+
 .btn-p{background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;font-weight:700;transition:all .25s;border:none;cursor:pointer}
 .btn-p:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(99,102,241,.55)}
 .btn-p:disabled{opacity:.35;cursor:not-allowed}
@@ -69,6 +76,7 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
+<!-- VIEW: EXPLORE -->
 <section id="view-explore" class="view fadein">
 <div class="relative rounded-3xl p-8 sm:p-12 mb-8 overflow-hidden glass border border-indigo-500/15">
 <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full blur-3xl pointer-events-none" style="background:radial-gradient(circle,rgba(99,102,241,.2),transparent 70%)"></div>
@@ -95,6 +103,7 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <div id="campaigns-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 </section>
 
+<!-- VIEW: CREATE -->
 <section id="view-create" class="view hidden">
 <div class="max-w-3xl mx-auto glass p-6 sm:p-10 rounded-3xl">
 <div class="mb-8 border-b border-white/8 pb-6"><h2 class="disp text-2xl font-bold flex items-center gap-2"><i data-lucide="plus-square" class="w-6 h-6" style="color:var(--indigo)"></i>Create an election</h2>
@@ -120,8 +129,10 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <button type="submit" class="btn-p px-8 py-3 rounded-xl flex items-center gap-2"><i data-lucide="upload-cloud" class="w-4 h-4"></i>Publish election</button>
 </div></form></div></section>
 
+<!-- VIEW: DETAILS -->
 <section id="view-details" class="view hidden"></section>
 
+<!-- VIEW: LEDGER -->
 <section id="view-ledger" class="view hidden">
 <div class="space-y-8">
 <div class="flex flex-wrap justify-between items-end gap-4">
@@ -148,9 +159,10 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <tbody id="ledger-body" class="divide-y divide-white/5 font-mono" style="color:#c7cae0"></tbody></table></div></div>
 </div></section>
 
+<!-- VIEW: FOUNDERS -->
 <section id="view-founder" class="view hidden"><div class="space-y-8">
 <div><div class="flex items-center gap-3"><h2 class="disp text-2xl font-bold">Founder directory</h2>
-<span class="seal inline-flex items-center gap-1 font-bold text-xs px-2.5 py-1 rounded-full"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>Official roster</span></div>
+<span class="seal-gold inline-flex items-center gap-1 font-bold text-xs px-2.5 py-1 rounded-full"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>Official roster</span></div>
 <p class="text-sm mt-1" style="color:var(--dim)">Platform founders carrying the verified gold-seal badge.</p></div>
 <div id="founder-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 <div class="glass p-6 sm:p-8 rounded-3xl"><h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="shield-alert" class="w-5 h-5" style="color:var(--gold)"></i>Verification rules</h3>
@@ -159,8 +171,98 @@ body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,va
 <div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Persistent session</strong>Once claimed, the seal stays active on campaign creation and votes in this browser.</div>
 <div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Admin powers</strong>Verified founders can delete any campaign and sign audit transactions.</div>
 </div></div></div></section>
+
+<!-- VIEW: USER PROFILE & VERIFICATION CENTER -->
+<section id="view-profile" class="view hidden">
+<div class="max-w-4xl mx-auto space-y-8">
+<div class="glass p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+<div class="flex items-center gap-5">
+<div class="relative group">
+<img id="prof-avatar" src="" class="w-20 h-20 rounded-2xl bg-black/40 p-1 border border-white/10 object-cover">
+<div id="prof-badge-container" class="absolute -bottom-2 -right-2"></div>
+</div>
+<div>
+<h1 id="prof-name" class="disp text-2xl font-bold flex items-center gap-2">User Profile</h1>
+<p id="prof-username" class="text-xs font-mono" style="color:var(--cyan)">@username</p>
+<p id="prof-bio" class="text-xs mt-1" style="color:var(--dim)">No bio set yet.</p>
+</div>
+</div>
+<button onclick="connectMetaMask()" id="btn-metamask" class="btn-g px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2">
+<i data-lucide="wallet" class="w-4 h-4" style="color:var(--cyan)"></i><span id="wallet-text">Connect MetaMask</span>
+</button>
+</div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- OTP VERIFICATION PANEL -->
+<div class="glass p-6 rounded-3xl space-y-4">
+<h3 class="text-lg font-bold flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5" style="color:var(--cyan)"></i>Identity Verification</h3>
+<p class="text-xs" style="color:var(--dim)">Verify mobile number & email to claim the <strong>Animated Blue Tick Badge</strong>.</p>
+
+<div class="space-y-3 pt-2">
+<!-- Email OTP -->
+<div class="bg-black/20 p-4 rounded-2xl border border-white/5 space-y-2">
+<div class="flex justify-between items-center text-xs font-semibold">
+<span>Email Verification</span>
+<span id="status-email" class="text-amber-400">Unverified</span>
+</div>
+<div class="flex gap-2">
+<input id="input-otp-email" placeholder="Enter OTP (e.g. 1234)" class="inp flex-1 px-3 py-2 text-xs font-mono">
+<button onclick="triggerOtp('email')" id="btn-otp-email" class="btn-p px-3 py-2 rounded-xl text-xs">Send OTP</button>
+</div>
+</div>
+
+<!-- Mobile OTP -->
+<div class="bg-black/20 p-4 rounded-2xl border border-white/5 space-y-2">
+<div class="flex justify-between items-center text-xs font-semibold">
+<span>Mobile Number Verification</span>
+<span id="status-mobile" class="text-amber-400">Unverified</span>
+</div>
+<div class="flex gap-2">
+<input id="input-otp-mobile" placeholder="Enter OTP (e.g. 5678)" class="inp flex-1 px-3 py-2 text-xs font-mono">
+<button onclick="triggerOtp('mobile')" id="btn-otp-mobile" class="btn-p px-3 py-2 rounded-xl text-xs">Send OTP</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PROFILE EDIT FORM -->
+<div class="glass p-6 rounded-3xl space-y-4">
+<h3 class="text-lg font-bold flex items-center gap-2"><i data-lucide="user-cog" class="w-5 h-5" style="color:var(--indigo)"></i>Edit Details</h3>
+<form onsubmit="saveProfileDetails(event)" class="space-y-3 text-xs">
+<div>
+<label class="block font-semibold mb-1" style="color:var(--dim)">Display Name</label>
+<input id="edit-name" class="inp w-full px-3 py-2">
+</div>
+<div>
+<label class="block font-semibold mb-1" style="color:var(--dim)">Avatar Image URL</label>
+<input id="edit-avatar" placeholder="https://..." class="inp w-full px-3 py-2">
+</div>
+<div>
+<label class="block font-semibold mb-1" style="color:var(--dim)">Bio Description</label>
+<textarea id="edit-bio" rows="2" class="inp w-full px-3 py-2"></textarea>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-semibold mb-1" style="color:var(--dim)">Twitter / X</label>
+<input id="edit-twitter" placeholder="@handle" class="inp w-full px-3 py-2">
+</div>
+<div>
+<label class="block font-semibold mb-1" style="color:var(--dim)">GitHub</label>
+<input id="edit-github" placeholder="username" class="inp w-full px-3 py-2">
+</div>
+</div>
+<button type="submit" class="btn-p w-full py-2.5 rounded-xl font-bold mt-2">Save Profile Updates</button>
+</form>
+</div>
+</div>
+</div>
+</section>
+
 </main>
 
+<!-- AUTH MODAL -->
 <div id="auth-modal" class="modal-wrap hidden" onclick="if(event.target===this)closeAuthModal()">
 <div class="glass w-full max-w-md p-6 sm:p-8 rounded-3xl relative">
 <button onclick="closeAuthModal()" class="absolute top-4 right-4" style="color:var(--dim)"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -203,41 +305,52 @@ Continue with Google</button>
 <script>
 const CO_FOUNDERS=[{name:"Suprotim Chatterjee",email:"suprotim2005@gmail.com",role:"Co-Founder & Tech Lead"},{name:"Swarnava",email:"swarnava357@gmail.com",role:"Co-Founder & Web3 Architect"},{name:"Soham",email:"sohamkolay77@gmail.com",role:"Co-Founder & Product Strategist"}];
 const DEFAULT_CAMPAIGNS=[{id:"camp-001",institution:"Apex University Tech Council",title:"Student Body President & Tech Chair 2026",startDate:"2026-09-01T09:00",endDate:"2026-10-15T18:00",videoUrl:"https://www.youtube.com/embed/dQw4w9WgXcQ",createdBy:"Suprotim Chatterjee",creatorIsFounder:true,candidates:[{id:"cand-1",name:"David Chen",bio:"Senior CS major focused on open-source campus lab tools and AI research grants.",avatar:"David",votes:42},{id:"cand-2",name:"Sarah Jenkins",bio:"EE junior advocating for transparent club funding via web3 ledgers.",avatar:"Sarah",votes:38},{id:"cand-3",name:"Marcus Vance",bio:"Information Systems senior prioritizing cybersecurity workshops and mentorship.",avatar:"Marcus",votes:19}]},{id:"camp-002",institution:"Global Web3 Developers Club",title:"Lead Community Steward Election",startDate:"2026-09-20T10:00",endDate:"2026-11-01T20:00",videoUrl:"",createdBy:"Swarnava",creatorIsFounder:true,candidates:[{id:"cand-10",name:"Elena Rostova",bio:"Smart contract developer and hackathon organizer.",avatar:"Elena",votes:85},{id:"cand-20",name:"Kofi Arhin",bio:"DeFi researcher and protocol contributor.",avatar:"Kofi",votes:64}]}];
+
 let campaigns=JSON.parse(localStorage.getItem('dv_campaigns'))||DEFAULT_CAMPAIGNS;
 let ledgerLogs=JSON.parse(localStorage.getItem('dv_ledger'))||[];
 let currentUser=JSON.parse(localStorage.getItem('dv_user'))||null;
 let votes=JSON.parse(localStorage.getItem('dv_votes'))||{};
+let generatedOtps={email:null,mobile:null};
 let activeFilter='all',chartInstance=null,confirmCb=null;
 
 window.addEventListener('DOMContentLoaded',()=>{lucide.createIcons();updateUserNav();renderFounders();renderCampaignsGrid();seedLedger();setupDefaultCandidates();document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuthModal();closeConfirm()}})});
 
 function switchView(name,id=null){
-['explore','create','details','ledger','founder'].forEach(v=>document.getElementById('view-'+v).classList.add('hidden'));
+['explore','create','details','ledger','founder','profile'].forEach(v=>document.getElementById('view-'+v).classList.add('hidden'));
 const t=document.getElementById('view-'+name);t.classList.remove('hidden');t.classList.remove('fadein');void t.offsetWidth;t.classList.add('fadein');
 if(name==='details'&&id)renderDetails(id);
 else if(name==='ledger')renderLedger();
 else if(name==='explore')renderCampaignsGrid();
+else if(name==='profile')renderProfileView();
 window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>lucide.createIcons(),50);
 }
 
 function checkIsFounder(email){return !!email&&CO_FOUNDERS.some(f=>f.email.toLowerCase()===email.toLowerCase())}
-function persist(){localStorage.setItem('dv_campaigns',JSON.stringify(campaigns));localStorage.setItem('dv_ledger',JSON.stringify(ledgerLogs));localStorage.setItem('dv_votes',JSON.stringify(votes))}
+function persist(){localStorage.setItem('dv_campaigns',JSON.stringify(campaigns));localStorage.setItem('dv_ledger',JSON.stringify(ledgerLogs));localStorage.setItem('dv_votes',JSON.stringify(votes));if(currentUser)localStorage.setItem('dv_user',JSON.stringify(currentUser))}
 function canManage(c){return currentUser&&(currentUser.isFounder||currentUser.name===c.createdBy)}
 function timeLeft(target){const d=new Date(target)-new Date();if(d<=0)return null;const days=Math.floor(d/864e5),hrs=Math.floor(d%864e5/36e5),mins=Math.floor(d%36e5/6e4);return days>0?`${days}d ${hrs}h`:hrs>0?`${hrs}h ${mins}m`:`${mins}m`}
+
+function getBadgeHTML(user){
+if(!user)return '';
+if(user.isFounder)return `<span class="seal-gold rounded-full p-0.5 inline-flex items-center justify-center ml-1" title="Verified Founder Gold Badge"><i data-lucide="check" class="w-3 h-3 stroke-[3]"></i></span>`;
+if(user.isVerified)return `<span class="seal-blue rounded-full p-0.5 inline-flex items-center justify-center ml-1" title="Verified Blue Badge"><i data-lucide="check" class="w-3 h-3 stroke-[3]"></i></span>`;
+return '';
+}
 
 function updateUserNav(){
 const c=document.getElementById('user-nav');
 if(currentUser){
-const isF=checkIsFounder(currentUser.email);
-const seal=isF?`<span class="seal rounded-full p-0.5 inline-flex items-center justify-center ml-1"><i data-lucide="check" class="w-3 h-3 stroke-[3]"></i></span>`:'';
+const badge=getBadgeHTML(currentUser);
+const avatar=currentUser.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}`;
 c.innerHTML=`<div class="flex items-center gap-2">
-<div class="flex items-center gap-2 glass px-3 py-1.5 rounded-xl text-xs font-semibold"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}" class="w-6 h-6 rounded-lg bg-black/30"><span class="flex items-center">${currentUser.name}${seal}</span></div>
+<button onclick="switchView('profile')" class="flex items-center gap-2 glass px-3 py-1.5 rounded-xl text-xs font-semibold hover:border-indigo-400 transition"><img src="${avatar}" class="w-6 h-6 rounded-lg bg-black/30 object-cover"><span class="flex items-center">${currentUser.name}${badge}</span></button>
 <button onclick="logoutUser()" class="icn-btn" style="color:var(--dim)" title="Sign out"><i data-lucide="log-out" class="w-4 h-4"></i></button></div>`;
 }else{
 c.innerHTML=`<button onclick="openAuthModal()" class="btn-p px-4 py-2 rounded-xl text-sm flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i>Sign in</button>`;
 }
 lucide.createIcons();
 }
+
 function openAuthModal(){document.getElementById('auth-modal').classList.remove('hidden')}
 function closeAuthModal(){document.getElementById('auth-modal').classList.add('hidden')}
 function switchAuthTab(tab){
@@ -247,21 +360,102 @@ document.getElementById('auth-user').classList.toggle('hidden',tab!=='user');
 document.getElementById('auth-founder').classList.toggle('hidden',tab!=='founder');
 }
 function handleStandardAuth(e){e.preventDefault();const name=document.getElementById('auth-name').value,contact=document.getElementById('auth-contact').value;
-currentUser={name,email:contact,isFounder:checkIsFounder(contact)};localStorage.setItem('dv_user',JSON.stringify(currentUser));updateUserNav();closeAuthModal();showToast(`Welcome, ${currentUser.name}!`,"success");}
-function simulateGoogleLogin(){currentUser={name:"Alex Mercer",email:"alex.mercer@gmail.com",isFounder:false};localStorage.setItem('dv_user',JSON.stringify(currentUser));updateUserNav();closeAuthModal();showToast("Authenticated via Google","success");}
+currentUser={name,email:contact,isFounder:checkIsFounder(contact),isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};persist();updateUserNav();closeAuthModal();showToast(`Welcome, ${currentUser.name}!`,"success");}
+function simulateGoogleLogin(){currentUser={name:"Alex Mercer",email:"alex.mercer@gmail.com",isFounder:false,isVerified:false,emailVerified:false,mobileVerified:false,wallet:null,bio:'',twitter:'',github:''};persist();updateUserNav();closeAuthModal();showToast("Authenticated via Google","success");}
 function handleFounderClaim(e){e.preventDefault();claimAdminDirect(document.getElementById('claim-email').value.trim());}
 function claimAdminDirect(email,nameOverride=null){
 const f=CO_FOUNDERS.find(x=>x.email.toLowerCase()===email.toLowerCase());
-if(f){currentUser={name:nameOverride||f.name,email:f.email,isFounder:true};localStorage.setItem('dv_user',JSON.stringify(currentUser));updateUserNav();closeAuthModal();showToast("Founder profile claimed — gold seal active","success");switchView('founder');}
+if(f){currentUser={name:nameOverride||f.name,email:f.email,isFounder:true,isVerified:true,emailVerified:true,mobileVerified:true,wallet:null,bio:'',twitter:'',github:''};persist();updateUserNav();closeAuthModal();showToast("Founder profile claimed — gold seal active","success");switchView('founder');}
 else showToast("Email not found in founder registry","error");
 }
-function logoutUser(){currentUser=null;localStorage.removeItem('dv_user');updateUserNav();showToast("Signed out","info");}
+function logoutUser(){currentUser=null;localStorage.removeItem('dv_user');updateUserNav();showToast("Signed out","info");switchView('explore');}
+
+/* PROFILE & OTP VERIFICATION LOGIC */
+function renderProfileView(){
+if(!currentUser){switchView('explore');openAuthModal();return;}
+document.getElementById('prof-name').innerHTML=`${currentUser.name} ${getBadgeHTML(currentUser)}`;
+document.getElementById('prof-username').textContent=`@${currentUser.name.toLowerCase().replace(/\s+/g,'_')}`;
+document.getElementById('prof-bio').textContent=currentUser.bio||"No description provided yet.";
+document.getElementById('prof-avatar').src=currentUser.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}`;
+
+document.getElementById('edit-name').value=currentUser.name||'';
+document.getElementById('edit-avatar').value=currentUser.avatar||'';
+document.getElementById('edit-bio').value=currentUser.bio||'';
+document.getElementById('edit-twitter').value=currentUser.twitter||'';
+document.getElementById('edit-github').value=currentUser.github||'';
+
+document.getElementById('status-email').textContent=currentUser.emailVerified?"✓ Verified":"Unverified";
+document.getElementById('status-email').className=currentUser.emailVerified?"text-emerald-400 font-bold":"text-amber-400 font-bold";
+document.getElementById('status-mobile').textContent=currentUser.mobileVerified?"✓ Verified":"Unverified";
+document.getElementById('status-mobile').className=currentUser.mobileVerified?"text-emerald-400 font-bold":"text-amber-400 font-bold";
+
+if(currentUser.wallet){
+document.getElementById('wallet-text').textContent=`${currentUser.wallet.slice(0,6)}...${currentUser.wallet.slice(-4)}`;
+}
+lucide.createIcons();
+}
+
+function triggerOtp(type){
+const code=Math.floor(1000+Math.random()*9000).toString();
+generatedOtps[type]=code;
+showToast(`[SIMULATED SMS/EMAIL] Your ${type.toUpperCase()} OTP is: ${code}`,"info");
+const btn=document.getElementById(`btn-otp-${type}`);
+btn.textContent="Verify OTP";
+btn.onclick=()=>verifyOtp(type);
+}
+
+function verifyOtp(type){
+const input=document.getElementById(`input-otp-${type}`).value.trim();
+if(input===generatedOtps[type]){
+if(type==='email')currentUser.emailVerified=true;
+if(type==='mobile')currentUser.mobileVerified=true;
+
+if(currentUser.emailVerified&&currentUser.mobileVerified){
+currentUser.isVerified=true;
+showToast("Identity verified! Blue Checkmark Badge Unlocked!","success");
+}else{
+showToast(`${type.toUpperCase()} successfully verified!`,"success");
+}
+persist();
+updateUserNav();
+renderProfileView();
+}else{
+showToast("Invalid OTP entered. Please try again.","error");
+}
+}
+
+async function connectMetaMask(){
+if(window.ethereum){
+try{
+const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+currentUser.wallet=accounts[0];
+persist();
+renderProfileView();
+showToast("MetaMask Wallet connected!","success");
+}catch(e){showToast("Connection failed","error");}
+}else{
+showToast("MetaMask extension not detected in browser","error");
+}
+}
+
+function saveProfileDetails(e){
+e.preventDefault();
+currentUser.name=document.getElementById('edit-name').value;
+currentUser.avatar=document.getElementById('edit-avatar').value;
+currentUser.bio=document.getElementById('edit-bio').value;
+currentUser.twitter=document.getElementById('edit-twitter').value;
+currentUser.github=document.getElementById('edit-github').value;
+persist();
+updateUserNav();
+renderProfileView();
+showToast("Profile details updated!","success");
+}
 
 function renderFounders(){
 document.getElementById('founder-grid').innerHTML=CO_FOUNDERS.map(f=>`
 <div class="card p-6 relative overflow-hidden">
 <div class="flex items-start gap-4"><div class="relative"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${f.name}" class="w-16 h-16 rounded-2xl bg-black/30 p-1 border border-white/10">
-<div class="absolute -bottom-1 -right-1 seal rounded-full p-1"><i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i></div></div>
+<div class="absolute -bottom-1 -right-1 seal-gold rounded-full p-1"><i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i></div></div>
 <div><h3 class="text-lg font-bold">${f.name}</h3><p class="text-xs font-semibold mb-1" style="color:var(--gold)">${f.role}</p><p class="text-xs font-mono" style="color:var(--dim)">${f.email}</p></div></div>
 <div class="mt-6 pt-4 border-t border-white/8 flex items-center justify-between text-xs" style="color:var(--dim)"><span>Status: <strong style="color:var(--gold)">Verified admin</strong></span>
 <button onclick="claimAdminDirect('${f.email}','${f.name}')" class="hover:underline" style="color:#a5b4fc">Claim profile</button></div></div>`).join('');
@@ -301,7 +495,7 @@ if(isLive){badge=`<span class="pill pill-live"><span class="dotp"></span>Live</s
 else if(upcoming){badge=`<span class="pill pill-up">Upcoming</span>`;tl=timeLeft(c.startDate);tl=tl?`Starts in ${tl}`:'';}
 else{badge=`<span class="pill pill-done">Completed</span>`;}
 const tot=c.candidates.reduce((a,x)=>a+x.votes,0);
-const seal=c.creatorIsFounder?`<span class="seal rounded-full p-0.5 inline-flex ml-1"><i data-lucide="check" class="w-2.5 h-2.5 stroke-[3]"></i></span>`:'';
+const seal=c.creatorIsFounder?`<span class="seal-gold rounded-full p-0.5 inline-flex ml-1"><i data-lucide="check" class="w-2.5 h-2.5 stroke-[3]"></i></span>`:'';
 const del=canManage(c)?`<button onclick="event.stopPropagation();deleteCampaign('${c.id}')" class="icn-btn btn-d" title="Delete campaign"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:'';
 return `<div onclick="switchView('details','${c.id}')" class="card p-6 cursor-pointer flex flex-col justify-between">
 <div><div class="flex justify-between items-start mb-3 gap-2"><span class="text-xs font-bold uppercase tracking-wide" style="color:var(--dim2)">${c.institution}</span><div class="flex items-center gap-2">${badge}${del}</div></div>
@@ -345,7 +539,7 @@ else if(votedFor)btnLabel=isMine?'✓ Your vote':'Vote locked';
 else{btnLabel='Cast encrypted vote';btnDisabled=false;btnCls='btn-p';}
 return `<div class="card p-6 flex flex-col justify-between ${isMine?'border-color:var(--gold)':''}">
 <div><div class="flex items-center gap-4 mb-3"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cand.avatar)}" class="w-16 h-16 rounded-2xl bg-black/30 p-1 border border-white/10">
-<div><h4 class="text-lg font-bold flex items-center gap-2">${cand.name}${isMine?'<span class="seal rounded-full px-1.5 py-0.5 text-[9px] font-bold">YOUR VOTE</span>':''}</h4>
+<div><h4 class="text-lg font-bold flex items-center gap-2">${cand.name}${isMine?'<span class="seal-gold rounded-full px-1.5 py-0.5 text-[9px] font-bold">YOUR VOTE</span>':''}</h4>
 <span class="text-xs font-mono" style="color:#a5b4fc">${cand.votes} votes · ${pct}%</span></div></div>
 <div class="bar mb-3"><div class="bar-f" style="width:${pct}%"></div></div>
 <p class="text-xs leading-relaxed mb-5 bg-black/20 p-3 rounded-xl border border-white/5" style="color:#c7cae0">${cand.bio}</p></div>
