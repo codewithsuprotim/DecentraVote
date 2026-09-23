@@ -1,1223 +1,449 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DecentraVote | Blockchain-Based Institutional Voting Platform</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            850: '#0f172a',
-                            950: '#020617',
-                        },
-                        emerald: {
-                            400: '#34d399',
-                            500: '#10b981',
-                            600: '#059669',
-                        },
-                        cyan: {
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                        }
-                    },
-                    animation: {
-                        'pulse-glow': 'pulseGlow 2s infinite alternate',
-                        'float': 'float 6s ease-in-out infinite',
-                        'shimmer': 'shimmer 2.5s infinite linear',
-                    },
-                    keyframes: {
-                        pulseGlow: {
-                            '0%': { boxShadow: '0 0 15px rgba(16, 185, 129, 0.2)' },
-                            '100%': { boxShadow: '0 0 30px rgba(16, 185, 129, 0.6), 0 0 10px rgba(6, 182, 212, 0.4)' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' }
-                        },
-                        shimmer: {
-                            '0%': { backgroundPosition: '-200% 0' },
-                            '100%': { backgroundPosition: '200% 0' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #020617;
-            color: #f8fafc;
-            overflow-x: hidden;
-        }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glass-card {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            border-color: rgba(16, 185, 129, 0.3);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px -10px rgba(16, 185, 129, 0.15);
-        }
-
-        .glow-emerald {
-            text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .green-tick-badge {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #020617;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #059669;
-        }
-
-        /* View transitions */
-        .view-content {
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DecentraVote | Blockchain Institutional Voting</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--bg:#05060f;--bg2:#0a0c22;--surf:rgba(19,21,42,.58);--surf2:rgba(26,28,56,.68);--bd:rgba(255,255,255,.08);--bdh:rgba(129,140,248,.4);--tx:#f2f3fb;--dim:#9296ba;--dim2:#666a90;--indigo:#6366f1;--violet:#a855f7;--gold:#e8b93f;--live:#34d399;--danger:#f87171;--amber:#fbbf24}
+*{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,var(--bg2),var(--bg) 60%);color:var(--tx);overflow-x:hidden;min-height:100vh;margin:0}
+.disp{font-family:'Fraunces',serif}
+.glass{background:var(--surf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd)}
+.card{background:var(--surf2);backdrop-filter:blur(14px);border:1px solid var(--bd);transition:all .35s cubic-bezier(.16,1,.3,1);border-radius:1.5rem}
+.card:hover{border-color:var(--bdh);transform:translateY(-3px);box-shadow:0 16px 36px -14px rgba(99,102,241,.28)}
+.grad{background:linear-gradient(135deg,#818cf8,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.seal{background:linear-gradient(135deg,#f5d47f,var(--gold) 55%,#b8860b);box-shadow:0 0 0 3px rgba(232,185,63,.15),0 2px 8px rgba(0,0,0,.4);color:#241a02}
+.btn-p{background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;font-weight:700;transition:all .25s;border:none;cursor:pointer}
+.btn-p:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(99,102,241,.55)}
+.btn-p:disabled{opacity:.35;cursor:not-allowed}
+.btn-g{background:var(--surf2);border:1px solid var(--bd);color:var(--tx);transition:all .2s;cursor:pointer}
+.btn-g:hover{border-color:var(--bdh);background:rgba(99,102,241,.1)}
+.btn-d{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--danger);transition:all .2s;cursor:pointer}
+.btn-d:hover{background:rgba(248,113,113,.2)}
+.icn-btn{width:34px;height:34px;border-radius:.7rem;display:inline-flex;align-items:center;justify-content:center}
+.inp{background:#0d0f22;border:1px solid var(--bd);color:var(--tx);transition:border .2s,box-shadow .2s;border-radius:.85rem}
+.inp:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,.16)}
+.pill{font-size:10px;font-weight:700;letter-spacing:.02em;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.pill-live{background:rgba(52,211,153,.12);color:var(--live);border:1px solid rgba(52,211,153,.3)}
+.pill-up{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.pill-done{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--bd)}
+.dotp{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.bar{height:8px;border-radius:999px;background:#0d0f22;overflow:hidden}
+.bar-f{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--indigo),var(--violet));transition:width .8s cubic-bezier(.16,1,.3,1)}
+.fadein{animation:fadein .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-wrap{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(5,6,15,.78);backdrop-filter:blur(6px)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#20223f;border-radius:4px}
+.tab-btn{padding:.6rem 1rem;border-radius:.7rem;font-size:.8rem;font-weight:600;color:var(--dim);transition:all .2s;cursor:pointer;background:transparent;border:none}
+.tab-btn.on{background:rgba(99,102,241,.14);color:#c7d2fe}
+</style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-black">
-
-    <!-- NAVIGATION BAR -->
-    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                
-                <!-- Logo -->
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('explore')">
-                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                        <i data-lucide="shield-check" class="w-6 h-6 text-slate-950 stroke-[2.5]"></i>
-                    </div>
-                    <div>
-                        <span class="text-2xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
-                            Decentra<span class="gradient-text">Vote</span>
-                        </span>
-                        <span class="text-[10px] tracking-widest text-emerald-400 font-semibold uppercase block -mt-1">Blockchain Powered</span>
-                    </div>
-                </div>
-
-                <!-- Global Search -->
-                <div class="hidden md:flex flex-1 max-w-md mx-8">
-                    <div class="relative w-full">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
-                        <input type="text" id="global-search" onkeyup="handleGlobalSearch()" placeholder="Search institution, election, or candidate..." class="w-full bg-slate-900/90 border border-slate-700/60 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
-                    </div>
-                </div>
-
-                <!-- Nav Links & Auth -->
-                <div class="flex items-center space-x-2 sm:space-x-4">
-                    <button onclick="switchView('explore')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
-                        Explore
-                    </button>
-                    <button onclick="switchView('create')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
-                        Create
-                    </button>
-                    <button onclick="switchView('ledger')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
-                        Audit Ledger
-                    </button>
-                    <button onclick="switchView('founder')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
-                        Founders
-                    </button>
-
-                    <!-- User Profile Button / Sign In -->
-                    <div id="user-nav-container" class="pl-2 border-l border-slate-800">
-                        <button onclick="openAuthModal()" id="auth-btn" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-md shadow-emerald-500/20 hover:scale-105">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i>
-                            <span>Sign In / Claim</span>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </header>
-
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-        
-        <!-- VIEW 1: EXPLORE CAMPAIGNS -->
-        <section id="view-explore" class="view-content">
-            <!-- Hero Banner -->
-            <div class="relative rounded-3xl p-8 sm:p-12 mb-10 overflow-hidden glass-panel border border-emerald-500/20">
-                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute right-1/3 -top-10 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                
-                <div class="max-w-2xl relative z-10">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 mb-4">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                        Tamper-Proof & Immutable Cryptographic Voting
-                    </span>
-                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
-                        Decentralized Institutional <span class="gradient-text">Elections</span>
-                    </h1>
-                    <p class="text-slate-300 text-base sm:text-lg mb-8 leading-relaxed">
-                        Cast your verified vote securely on our simulated Web3 ledger. Transparent, verifiable, and instant automated tallying for universities, clubs, and organizations.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        <button onclick="switchView('create')" class="bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold px-6 py-3 rounded-xl hover:opacity-90 transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-                            <i data-lucide="plus-circle" class="w-5 h-5"></i> Launch Institutional Election
-                        </button>
-                        <button onclick="switchView('founder')" class="glass-card px-6 py-3 rounded-xl font-semibold text-slate-200 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
-                            <i data-lucide="badge-check" class="w-5 h-5 text-emerald-400"></i> Co-Founder Profile Claim
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filter Controls -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <div>
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i data-lucide="vote" class="w-5 h-5 text-emerald-400"></i> Active Institutional Campaigns
-                    </h2>
-                    <p class="text-xs text-slate-400">Select a campaign to inspect candidates, review media, and cast your ballot.</p>
-                </div>
-                
-                <div class="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 w-full sm:w-auto">
-                    <button onclick="filterCampaigns('all')" id="filter-all" class="filter-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-slate-800 shadow transition">All</button>
-                    <button onclick="filterCampaigns('live')" id="filter-live" class="filter-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Live</button>
-                    <button onclick="filterCampaigns('upcoming')" id="filter-upcoming" class="filter-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Upcoming</button>
-                    <button onclick="filterCampaigns('completed')" id="filter-completed" class="filter-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Completed</button>
-                </div>
-            </div>
-
-            <!-- Campaign Cards Grid -->
-            <div id="campaigns-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Dynamically populated -->
-            </div>
-        </section>
-
-        <!-- VIEW 2: CREATE CAMPAIGN -->
-        <section id="view-create" class="view-content hidden">
-            <div class="max-w-3xl mx-auto">
-                <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-800 mb-8">
-                    <div class="mb-8 border-b border-slate-800 pb-6">
-                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                            <i data-lucide="plus-square" class="w-6 h-6 text-emerald-400"></i> Create Institutional Vote Campaign
-                        </h2>
-                        <p class="text-sm text-slate-400 mt-1">Configure your election parameters, add candidates, and publish to the ledger.</p>
-                    </div>
-
-                    <form id="create-campaign-form" onsubmit="handleCreateCampaign(event)" class="space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Institution Name</label>
-                                <input type="text" id="form-inst-name" required placeholder="e.g. Stanford University CS Dept" class="w-full bg-slate-900 border border-slate-700/70 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Election Title</label>
-                                <input type="text" id="form-title" required placeholder="e.g. Student Body President 2026" class="w-full bg-slate-900 border border-slate-700/70 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Start Date & Time</label>
-                                <input type="datetime-local" id="form-start" required class="w-full bg-slate-900 border border-slate-700/70 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">End Date & Time</label>
-                                <input type="datetime-local" id="form-end" required class="w-full bg-slate-900 border border-slate-700/70 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Promotional Video URL (Optional Demo)</label>
-                            <input type="url" id="form-video" placeholder="https://www.youtube.com/embed/..." class="w-full bg-slate-900 border border-slate-700/70 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                        </div>
-
-                        <!-- Candidate Dynamic Builder -->
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Election Candidates</label>
-                                <button type="button" onclick="addCandidateInput()" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                                    <i data-lucide="plus" class="w-4 h-4"></i> Add Candidate
-                                </button>
-                            </div>
-                            <div id="candidates-input-container" class="space-y-4">
-                                <!-- Candidate inputs appended here -->
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-800 flex justify-end gap-4">
-                            <button type="button" onclick="switchView('explore')" class="px-6 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white transition">Cancel</button>
-                            <button type="submit" class="bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold px-8 py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-                                <i data-lucide="upload-cloud" class="w-4 h-4"></i> Publish Election
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW 3: CAMPAIGN DETAILS & VOTING -->
-        <section id="view-details" class="view-content hidden">
-            <!-- Dynamically filled with campaign detail, candidate ballot, promo poster generator -->
-        </section>
-
-        <!-- VIEW 4: RESULTS & BLOCKCHAIN LEDGER -->
-        <section id="view-ledger" class="view-content hidden">
-            <div class="space-y-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                        <i data-lucide="line-chart" class="w-6 h-6 text-emerald-400"></i> Real-Time Results & Cryptographic Audit Ledger
-                    </h2>
-                    <p class="text-sm text-slate-400 mt-1">Immutable record of all SHA-256 encrypted ballots stored on the simulated Web3 chain.</p>
-                </div>
-
-                <!-- Chart Container -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 glass-panel p-6 rounded-3xl border border-slate-800">
-                        <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-between">
-                            <span>Active Election Tally</span>
-                            <span id="chart-election-title" class="text-xs text-emerald-400 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Select Campaign</span>
-                        </h3>
-                        <div class="relative h-72 w-full">
-                            <canvas id="resultsChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-white mb-4">Chain Health Stats</h3>
-                            <div class="space-y-4">
-                                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                                    <span class="text-xs text-slate-400 block">Total Verified Votes</span>
-                                    <span id="stat-total-votes" class="text-2xl font-extrabold text-emerald-400 font-mono">0</span>
-                                </div>
-                                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                                    <span class="text-xs text-slate-400 block">Current Block Height</span>
-                                    <span id="stat-block-height" class="text-2xl font-extrabold text-cyan-400 font-mono">#18,402</span>
-                                </div>
-                                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                                    <span class="text-xs text-slate-400 block">Consensus Algorithm</span>
-                                    <span class="text-sm font-semibold text-slate-200">Proof of Authority (PoA)</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-500">
-                            Every vote triggers a SHA-256 cryptographic digest verified by node nodes.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ledger Table -->
-                <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
-                    <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="database" class="w-5 h-5 text-cyan-400"></i> Audit Ledger Logs
-                        </h3>
-                        <span class="text-xs bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 font-mono">Live Syncing</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
-                                <tr>
-                                    <th class="px-6 py-4">Timestamp</th>
-                                    <th class="px-6 py-4">Block #</th>
-                                    <th class="px-6 py-4">Voter Hash (Anonymous)</th>
-                                    <th class="px-6 py-4">Candidate ID</th>
-                                    <th class="px-6 py-4">Transaction Hash</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ledger-table-body" class="divide-y divide-slate-800/60 font-mono text-slate-300">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW 5: CO-FOUNDER DASHBOARD -->
-        <section id="view-founder" class="view-content hidden">
-            <div class="space-y-8">
-                <div>
-                    <div class="flex items-center gap-3">
-                        <h2 class="text-2xl font-bold text-white">Co-Founder Platform Directory</h2>
-                        <span class="green-tick-badge inline-flex items-center gap-1 text-slate-950 font-bold text-xs px-2.5 py-0.5 rounded-full">
-                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 fill-slate-950 text-emerald-400"></i> Official Roster
-                        </span>
-                    </div>
-                    <p class="text-sm text-slate-400 mt-1">Platform founders and administrators equipped with verified Green Tick profile status.</p>
-                </div>
-
-                <!-- Founder Roster Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
-                    <!-- Suprotim Chatterjee -->
-                    <div class="glass-card p-6 rounded-3xl relative overflow-hidden border border-emerald-500/30">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
-                        <div class="flex items-start gap-4">
-                            <div class="relative">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Suprotim" alt="Suprotim" class="w-16 h-16 rounded-2xl bg-slate-800 p-1 border border-slate-700">
-                                <div class="absolute -bottom-1 -right-1 green-tick-badge rounded-full p-1 text-slate-950 shadow-md" title="Official Verified Founder">
-                                    <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-white flex items-center gap-1.5">
-                                    Suprotim Chatterjee
-                                </h3>
-                                <p class="text-xs text-emerald-400 font-semibold mb-1">Co-Founder & Tech Lead</p>
-                                <p class="text-xs text-slate-400 font-mono">suprotim2005@gmail.com</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                            <span>Status: <strong class="text-emerald-400">Verified Admin</strong></span>
-                            <button onclick="claimAdminDirect('suprotim2005@gmail.com', 'Suprotim Chatterjee')" class="text-emerald-400 hover:underline">Claim Profile</button>
-                        </div>
-                    </div>
-
-                    <!-- Swarnava -->
-                    <div class="glass-card p-6 rounded-3xl relative overflow-hidden border border-emerald-500/30">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
-                        <div class="flex items-start gap-4">
-                            <div class="relative">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Swarnava" alt="Swarnava" class="w-16 h-16 rounded-2xl bg-slate-800 p-1 border border-slate-700">
-                                <div class="absolute -bottom-1 -right-1 green-tick-badge rounded-full p-1 text-slate-950 shadow-md" title="Official Verified Founder">
-                                    <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-white flex items-center gap-1.5">
-                                    Swarnava
-                                </h3>
-                                <p class="text-xs text-emerald-400 font-semibold mb-1">Co-Founder & Web3 Architect</p>
-                                <p class="text-xs text-slate-400 font-mono">swarnava357@gmail.com</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                            <span>Status: <strong class="text-emerald-400">Verified Admin</strong></span>
-                            <button onclick="claimAdminDirect('swarnava357@gmail.com', 'Swarnava')" class="text-emerald-400 hover:underline">Claim Profile</button>
-                        </div>
-                    </div>
-
-                    <!-- Soham -->
-                    <div class="glass-card p-6 rounded-3xl relative overflow-hidden border border-emerald-500/30">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
-                        <div class="flex items-start gap-4">
-                            <div class="relative">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Soham" alt="Soham" class="w-16 h-16 rounded-2xl bg-slate-800 p-1 border border-slate-700">
-                                <div class="absolute -bottom-1 -right-1 green-tick-badge rounded-full p-1 text-slate-950 shadow-md" title="Official Verified Founder">
-                                    <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-white flex items-center gap-1.5">
-                                    Soham
-                                </h3>
-                                <p class="text-xs text-emerald-400 font-semibold mb-1">Co-Founder & Product Strategist</p>
-                                <p class="text-xs text-slate-400 font-mono">sohamkolay77@gmail.com</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                            <span>Status: <strong class="text-emerald-400">Verified Admin</strong></span>
-                            <button onclick="claimAdminDirect('sohamkolay77@gmail.com', 'Soham')" class="text-emerald-400 hover:underline">Claim Profile</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Admin System Information -->
-                <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i data-lucide="shield-alert" class="w-5 h-5 text-emerald-400"></i> Verification & Green Tick Security Rules
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs text-slate-300">
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                            <strong class="text-white block text-sm mb-1">1. Hardcoded Verification</strong>
-                            Only pre-registered founder email addresses qualify for the official Emerald Green Tick badge across the platform.
-                        </div>
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                            <strong class="text-white block text-sm mb-1">2. Persistent State</strong>
-                            Once claimed, your session remains persistent in local browser storage, keeping your Green Tick active on campaign creation and commentary.
-                        </div>
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                            <strong class="text-white block text-sm mb-1">3. Administrative Override</strong>
-                            Verified founders can manage campaigns, override election countdown timers for testing, and sign audit transactions.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- AUTH MODAL -->
-    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
-        <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <!-- Tabs -->
-            <div class="flex border-b border-slate-800 mb-6">
-                <button onclick="switchAuthTab('user')" id="authtab-user" class="flex-1 pb-3 text-sm font-bold text-emerald-400 border-b-2 border-emerald-400">User / Manager</button>
-                <button onclick="switchAuthTab('founder')" id="authtab-founder" class="flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-white">Co-Founder Claim</button>
-            </div>
-
-            <!-- Standard Auth Form -->
-            <div id="authform-user-container">
-                <p class="text-xs text-slate-400 mb-4">Sign in as a voter or campaign manager to launch elections.</p>
-                
-                <button onclick="simulateGoogleLogin()" class="w-full bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-200 font-medium py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 mb-4 transition">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"/></svg>
-                    Continue with Google
-                </button>
-
-                <div class="relative flex items-center justify-center my-4">
-                    <div class="border-t border-slate-800 w-full"></div>
-                    <span class="bg-slate-900 px-2 text-[10px] text-slate-500 uppercase tracking-widest absolute">Or Email</span>
-                </div>
-
-                <form onsubmit="handleStandardAuth(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-                        <input type="text" id="auth-name" required placeholder="Alex Mercer" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Email / Mobile Number</label>
-                        <input type="text" id="auth-contact" required placeholder="alex@university.edu" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition">
-                        Sign In / Register
-                    </button>
-                </form>
-            </div>
-
-            <!-- Founder Claim Form -->
-            <div id="authform-founder-container" class="hidden">
-                <div class="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl mb-4">
-                    <p class="text-xs text-emerald-300 leading-relaxed">
-                        <i data-lucide="shield-check" class="w-4 h-4 inline mr-1"></i>
-                        Input your pre-configured founder email address to claim your profile and receive your official <strong>Emerald Green Tick Badge</strong>.
-                    </p>
-                </div>
-
-                <form onsubmit="handleFounderClaim(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Founder Registered Email</label>
-                        <input type="email" id="claim-email" required placeholder="e.g. suprotim2005@gmail.com" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i> Claim Co-Founder Profile
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-800/80 glass-panel mt-16 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-            <div class="flex items-center gap-2">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                <span>DecentraVote &copy; 2026. GitHub Pages Compatible SPA.</span>
-            </div>
-            <div class="flex gap-4">
-                <span>Co-Founders: Suprotim, Swarnava, Soham</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- APPLICATION LOGIC & STATE MANAGEMENT -->
-    <script>
-        // 1. HARDCODED CO-FOUNDER EMAILS
-        const CO_FOUNDERS = [
-            { name: "Suprotim Chatterjee", email: "suprotim2005@gmail.com" },
-            { name: "Swarnava", email: "swarnava357@gmail.com" },
-            { name: "Soham", email: "sohamkolay77@gmail.com" }
-        ];
-
-        // INITIAL SEED CAMPAIGN DATA
-        const DEFAULT_CAMPAIGNS = [
-            {
-                id: "camp-001",
-                institution: "Apex University Tech Council",
-                title: "Student Body President & Tech Chair 2026",
-                startDate: "2026-09-01T09:00",
-                endDate: "2026-10-15T18:00",
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                candidates: [
-                    { id: "cand-1", name: "David Chen", bio: "Senior Computer Science Major, focused on open-source campus lab tools and AI research grants.", avatar: "David", votes: 42 },
-                    { id: "cand-2", name: "Sarah Jenkins", bio: "Electrical Engineering Junior, advocating for transparent club funding via web3 ledgers.", avatar: "Sarah", votes: 38 },
-                    { id: "cand-3", name: "Marcus Vance", bio: "Information Systems Senior, prioritizing cybersecurity workshops and career mentorship.", avatar: "Marcus", votes: 19 }
-                ],
-                createdBy: "Suprotim Chatterjee",
-                creatorIsFounder: true
-            },
-            {
-                id: "camp-002",
-                institution: "Global Web3 Developers Club",
-                title: "Lead Community Steward Election",
-                startDate: "2026-09-20T10:00",
-                endDate: "2026-11-01T20:00",
-                videoUrl: "",
-                candidates: [
-                    { id: "cand-10", name: "Elena Rostova", bio: "Smart contract developer and hackathon organizer.", avatar: "Elena", votes: 85 },
-                    { id: "cand-20", name: "Kofi Arhin", bio: "DeFi researcher and protocol contributor.", avatar: "Kofi", votes: 64 }
-                ],
-                createdBy: "Swarnava",
-                creatorIsFounder: true
-            }
-        ];
-
-        // APP STATE
-        let campaigns = JSON.parse(localStorage.getItem('dv_campaigns')) || DEFAULT_CAMPAIGNS;
-        let ledgerLogs = JSON.parse(localStorage.getItem('dv_ledger')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('dv_user')) || null;
-        let activeFilter = 'all';
-        let chartInstance = null;
-
-        // ON LOAD INITIALIZATION
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            updateUserNav();
-            renderCampaignsGrid();
-            initSeedLedgerIfEmpty();
-            setupDefaultCandidateInputs();
-        });
-
-        // VIEW SWITCHING
-        function switchView(viewName, campaignId = null) {
-            const views = ['explore', 'create', 'details', 'ledger', 'founder'];
-            views.forEach(v => {
-                const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.add('hidden');
-            });
-
-            const targetView = document.getElementById(`view-${viewName}`);
-            if (targetView) targetView.classList.remove('hidden');
-
-            if (viewName === 'details' && campaignId) {
-                renderCampaignDetails(campaignId);
-            } else if (viewName === 'ledger') {
-                renderLedgerView();
-            } else if (viewName === 'explore') {
-                renderCampaignsGrid();
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => lucide.createIcons(), 50);
-        }
-
-        // USER AUTHENTICATION & GREEN TICK LOGIC
-        function updateUserNav() {
-            const container = document.getElementById('user-nav-container');
-            if (!container) return;
-
-            if (currentUser) {
-                const isFounder = checkIsFounder(currentUser.email);
-                const greenTickHTML = isFounder ? `
-                    <span class="green-tick-badge rounded-full p-0.5 text-slate-950 inline-flex items-center justify-center ml-1" title="Official Verified Founder">
-                        <i data-lucide="check" class="w-3 h-3 stroke-[3]"></i>
-                    </span>
-                ` : '';
-
-                container.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-2 bg-slate-900 border border-slate-700/80 px-3 py-1.5 rounded-xl text-xs font-semibold">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}" class="w-6 h-6 rounded-lg bg-slate-800">
-                            <span class="text-white flex items-center">${currentUser.name} ${greenTickHTML}</span>
-                        </div>
-                        <button onclick="logoutUser()" class="text-xs text-slate-400 hover:text-red-400 transition" title="Sign Out">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <button onclick="openAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-md shadow-emerald-500/20 hover:scale-105">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Sign In / Claim</span>
-                    </button>
-                `;
-            }
-            lucide.createIcons();
-        }
-
-        function checkIsFounder(email) {
-            if (!email) return false;
-            return CO_FOUNDERS.some(f => f.email.toLowerCase() === email.toLowerCase());
-        }
-
-        function openAuthModal() {
-            document.getElementById('auth-modal').classList.remove('hidden');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        }
-
-        function switchAuthTab(tab) {
-            const userTab = document.getElementById('authtab-user');
-            const founderTab = document.getElementById('authtab-founder');
-            const userContainer = document.getElementById('authform-user-container');
-            const founderContainer = document.getElementById('authform-founder-container');
-
-            if (tab === 'user') {
-                userTab.className = "flex-1 pb-3 text-sm font-bold text-emerald-400 border-b-2 border-emerald-400";
-                founderTab.className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-white";
-                userContainer.classList.remove('hidden');
-                founderContainer.classList.add('hidden');
-            } else {
-                founderTab.className = "flex-1 pb-3 text-sm font-bold text-emerald-400 border-b-2 border-emerald-400";
-                userTab.className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-white";
-                founderContainer.classList.remove('hidden');
-                userContainer.classList.add('hidden');
-            }
-        }
-
-        function handleStandardAuth(e) {
-            e.preventDefault();
-            const name = document.getElementById('auth-name').value;
-            const contact = document.getElementById('auth-contact').value;
-            
-            currentUser = {
-                name: name,
-                email: contact,
-                isFounder: checkIsFounder(contact)
-            };
-            
-            localStorage.setItem('dv_user', JSON.stringify(currentUser));
-            updateUserNav();
-            closeAuthModal();
-            showToast(`Welcome back, ${currentUser.name}!`, "success");
-        }
-
-        function simulateGoogleLogin() {
-            currentUser = {
-                name: "Alex Mercer",
-                email: "alex.mercer@gmail.com",
-                isFounder: false
-            };
-            localStorage.setItem('dv_user', JSON.stringify(currentUser));
-            updateUserNav();
-            closeAuthModal();
-            showToast("Successfully authenticated via Google", "success");
-        }
-
-        function handleFounderClaim(e) {
-            e.preventDefault();
-            const emailInput = document.getElementById('claim-email').value.trim();
-            claimAdminDirect(emailInput);
-        }
-
-        function claimAdminDirect(email, nameOverride = null) {
-            const founder = CO_FOUNDERS.find(f => f.email.toLowerCase() === email.toLowerCase());
-            if (founder) {
-                currentUser = {
-                    name: nameOverride || founder.name,
-                    email: founder.email,
-                    isFounder: true
-                };
-                localStorage.setItem('dv_user', JSON.stringify(currentUser));
-                updateUserNav();
-                closeAuthModal();
-                showToast(`Verified Co-Founder Profile Claimed! Green Tick Active.`, "success");
-                switchView('founder');
-            } else {
-                showToast("Email address not recognized in Co-Founder pre-configured database.", "error");
-            }
-        }
-
-        function logoutUser() {
-            currentUser = null;
-            localStorage.removeItem('dv_user');
-            updateUserNav();
-            showToast("Signed out successfully", "info");
-        }
-
-        // CAMPAIGNS RENDERING & FILTERS
-        function filterCampaigns(status) {
-            activeFilter = status;
-            document.querySelectorAll('.filter-tab').forEach(btn => {
-                btn.className = "filter-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition";
-            });
-            const activeBtn = document.getElementById(`filter-${status}`);
-            if (activeBtn) activeBtn.className = "filter-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-slate-800 shadow transition";
-            renderCampaignsGrid();
-        }
-
-        function renderCampaignsGrid(searchQuery = '') {
-            const container = document.getElementById('campaigns-grid');
-            if (!container) return;
-
-            const now = new Date();
-
-            let filtered = campaigns.filter(c => {
-                const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                      c.institution.toLowerCase().includes(searchQuery.toLowerCase());
-                
-                const start = new Date(c.startDate);
-                const end = new Date(c.endDate);
-
-                if (activeFilter === 'live') return matchesSearch && (now >= start && now <= end);
-                if (activeFilter === 'upcoming') return matchesSearch && (now < start);
-                if (activeFilter === 'completed') return matchesSearch && (now > end);
-                return matchesSearch;
-            });
-
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full py-12 text-center text-slate-500 glass-panel rounded-3xl">
-                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 stroke-1 text-slate-600"></i>
-                        <p class="text-sm">No institutional campaigns found matching criteria.</p>
-                    </div>
-                `;
-                lucide.createIcons();
-                return;
-            }
-
-            container.innerHTML = filtered.map(c => {
-                const start = new Date(c.startDate);
-                const end = new Date(c.endDate);
-                let statusBadge = '';
-
-                if (now >= start && now <= end) {
-                    statusBadge = `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span> Live</span>`;
-                } else if (now < start) {
-                    statusBadge = `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full">Upcoming</span>`;
-                } else {
-                    statusBadge = `<span class="bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full">Completed</span>`;
-                }
-
-                const totalVotes = c.candidates.reduce((acc, curr) => acc + curr.votes, 0);
-
-                const creatorBadge = c.creatorIsFounder ? `
-                    <span class="green-tick-badge rounded-full p-0.5 text-slate-950 inline-flex items-center justify-center ml-1" title="Created by Verified Founder">
-                        <i data-lucide="check" class="w-2.5 h-2.5 stroke-[3]"></i>
-                    </span>
-                ` : '';
-
-                return `
-                    <div onclick="switchView('details', '${c.id}')" class="glass-card p-6 rounded-3xl cursor-pointer flex flex-col justify-between group">
-                        <div>
-                            <div class="flex justify-between items-start mb-3 gap-2">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">${c.institution}</span>
-                                ${statusBadge}
-                            </div>
-                            <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition leading-snug mb-3">${c.title}</h3>
-                            <div class="text-xs text-slate-400 space-y-1.5 mb-6">
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
-                                    <span>${c.candidates.length} Registered Candidates</span>
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-500"></i>
-                                    <span>${totalVotes} Encrypted Votes Cast</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                            <span class="flex items-center">By ${c.createdBy} ${creatorBadge}</span>
-                            <span class="text-emerald-400 font-semibold group-hover:translate-x-1 transition flex items-center gap-1">
-                                Open Ballot <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            lucide.createIcons();
-        }
-
-        function handleGlobalSearch() {
-            const query = document.getElementById('global-search').value;
-            renderCampaignsGrid(query);
-        }
-
-        // CAMPAIGN DETAILS & VOTING INTERACTION
-        function renderCampaignDetails(campaignId) {
-            const campaign = campaigns.find(c => c.id === campaignId);
-            const container = document.getElementById('view-details');
-            if (!campaign || !container) return;
-
-            const now = new Date();
-            const start = new Date(campaign.startDate);
-            const end = new Date(campaign.endDate);
-            const isLive = now >= start && now <= end;
-
-            const totalVotes = campaign.candidates.reduce((acc, curr) => acc + curr.votes, 0);
-
-            container.innerHTML = `
-                <div class="space-y-8">
-                    <!-- Top Navigation Bar -->
-                    <div class="flex items-center justify-between">
-                        <button onclick="switchView('explore')" class="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 transition">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to All Campaigns
-                        </button>
-                        <span class="text-xs font-mono text-slate-500">ID: ${campaign.id}</span>
-                    </div>
-
-                    <!-- Header Panel -->
-                    <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-800 relative overflow-hidden">
-                        <div class="max-w-3xl">
-                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">${campaign.institution}</span>
-                            <h1 class="text-2xl sm:text-4xl font-extrabold text-white mb-4 leading-tight">${campaign.title}</h1>
-                            <div class="flex flex-wrap items-center gap-4 text-xs text-slate-400">
-                                <span class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-                                    <strong>End Date:</strong> ${end.toLocaleString()}
-                                </span>
-                                <span class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-                                    <strong>Total Votes Cast:</strong> <span class="text-emerald-400 font-mono">${totalVotes}</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Media Promo / Video Showcase -->
-                    ${campaign.videoUrl ? `
-                        <div class="glass-panel p-6 rounded-3xl border border-slate-800">
-                            <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <i data-lucide="video" class="w-4 h-4 text-emerald-400"></i> Campaign Promotional Media
-                            </h3>
-                            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
-                                <iframe src="${campaign.videoUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <!-- Ballot Candidate Cards -->
-                    <div>
-                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                            <i data-lucide="users" class="w-5 h-5 text-emerald-400"></i> Candidates & Ballot Options
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            ${campaign.candidates.map(cand => {
-                                const percent = totalVotes > 0 ? Math.round((cand.votes / totalVotes) * 100) : 0;
-                                return `
-                                    <div class="glass-card p-6 rounded-3xl border border-slate-800/80 flex flex-col justify-between">
-                                        <div>
-                                            <div class="flex items-center gap-4 mb-4">
-                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cand.avatar)}" class="w-16 h-16 rounded-2xl bg-slate-900 p-1 border border-slate-700">
-                                                <div>
-                                                    <h4 class="text-lg font-bold text-white">${cand.name}</h4>
-                                                    <span class="text-xs text-emerald-400 font-mono">${cand.votes} Votes (${percent}%)</span>
-                                                </div>
-                                            </div>
-                                            <p class="text-xs text-slate-300 leading-relaxed mb-6 bg-slate-900/50 p-3 rounded-xl border border-slate-800/60">${cand.bio}</p>
-                                        </div>
-
-                                        <button onclick="castVote('${campaign.id}', '${cand.id}')" ${!isLive ? 'disabled' : ''} class="${isLive ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 hover:opacity-90 shadow-emerald-500/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'} w-full py-3 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
-                                            <i data-lucide="check-square" class="w-4 h-4"></i> ${isLive ? 'Submit Encrypted Vote' : 'Voting Closed'}
-                                        </button>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Digital Media Kit Generator -->
-                    <div class="glass-panel p-6 rounded-3xl border border-slate-800">
-                        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i data-lucide="share-2" class="w-4 h-4 text-cyan-400"></i> Promotional Media Kit Generator
-                        </h3>
-                        <p class="text-xs text-slate-400 mb-4">Generate shareable institutional promotional card for social channels.</p>
-                        <div id="promo-card" class="bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950 p-6 rounded-2xl border border-emerald-500/30 text-center">
-                            <i data-lucide="shield-check" class="w-10 h-10 mx-auto text-emerald-400 mb-2"></i>
-                            <h4 class="text-lg font-extrabold text-white">${campaign.title}</h4>
-                            <p class="text-xs text-emerald-400 font-semibold mb-3">${campaign.institution}</p>
-                            <p class="text-[10px] text-slate-400 font-mono">Cast your cryptographic vote on DecentraVote Web3 Ledger.</p>
-                        </div>
-                        <button onclick="copyPromoLink('${campaign.id}')" class="mt-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Campaign Share Link
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            lucide.createIcons();
-        }
-
-        // CRYPTOGRAPHIC VOTING & LEDGER LOGIC
-        async function castVote(campaignId, candidateId) {
-            if (!currentUser) {
-                showToast("Please sign in or claim a profile before voting.", "error");
-                openAuthModal();
-                return;
-            }
-
-            const campaign = campaigns.find(c => c.id === campaignId);
-            if (!campaign) return;
-
-            const candidate = campaign.candidates.find(cand => cand.id === candidateId);
-            if (!candidate) return;
-
-            // Increment Vote
-            candidate.votes += 1;
-            localStorage.setItem('dv_campaigns', JSON.stringify(campaigns));
-
-            // Generate SHA-256 Hash
-            const timestamp = new Date().toISOString();
-            const rawString = `${currentUser.email}-${campaignId}-${candidateId}-${timestamp}-${Math.random()}`;
-            const voterHash = await generateSHA256(currentUser.email);
-            const txHash = await generateSHA256(rawString);
-            const blockNum = 18400 + ledgerLogs.length + 1;
-
-            const newLog = {
-                timestamp: new Date().toLocaleTimeString(),
-                blockHeight: `#${blockNum}`,
-                voterHash: `0x${voterHash.substring(0, 12)}...`,
-                candidateName: candidate.name,
-                txHash: `0x${txHash}`
-            };
-
-            ledgerLogs.unshift(newLog);
-            localStorage.setItem('dv_ledger', JSON.stringify(ledgerLogs));
-
-            showToast(`Vote for ${candidate.name} verified on blockchain!`, "success");
-            renderCampaignDetails(campaignId);
-        }
-
-        async function generateSHA256(message) {
-            const msgUint8 = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function initSeedLedgerIfEmpty() {
-            if (ledgerLogs.length === 0) {
-                ledgerLogs = [
-                    { timestamp: "10:14:22 AM", blockHeight: "#18402", voterHash: "0x8f2a99c1...", candidateName: "David Chen", txHash: "0xa9f7823c4e112001e89" },
-                    { timestamp: "09:48:10 AM", blockHeight: "#18401", voterHash: "0x3d41e72a...", candidateName: "Sarah Jenkins", txHash: "0xb7c102948123ee901fa" },
-                    { timestamp: "08:30:05 AM", blockHeight: "#18400", voterHash: "0xe29124bb...", candidateName: "Elena Rostova", txHash: "0xc8891024bcda129038d" }
-                ];
-                localStorage.setItem('dv_ledger', JSON.stringify(ledgerLogs));
-            }
-        }
-
-        // RENDER LEDGER & CHART
-        function renderLedgerView() {
-            const tableBody = document.getElementById('ledger-table-body');
-            const totalVotesEl = document.getElementById('stat-total-votes');
-            const blockHeightEl = document.getElementById('stat-block-height');
-
-            if (tableBody) {
-                tableBody.innerHTML = ledgerLogs.map(log => `
-                    <tr class="hover:bg-slate-900/50 transition">
-                        <td class="px-6 py-4">${log.timestamp}</td>
-                        <td class="px-6 py-4 text-emerald-400 font-bold">${log.blockHeight}</td>
-                        <td class="px-6 py-4">${log.voterHash}</td>
-                        <td class="px-6 py-4 text-white font-semibold">${log.candidateName}</td>
-                        <td class="px-6 py-4 text-slate-400 text-[10px] break-all">${log.txHash}</td>
-                    </tr>
-                `).join('');
-            }
-
-            const sumVotes = campaigns.reduce((acc, c) => acc + c.candidates.reduce((ca, curr) => ca + curr.votes, 0), 0);
-            if (totalVotesEl) totalVotesEl.innerText = sumVotes;
-            if (blockHeightEl) blockHeightEl.innerText = `#${18400 + ledgerLogs.length}`;
-
-            renderChart();
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('resultsChart');
-            if (!ctx) return;
-
-            const activeCamp = campaigns[0];
-            document.getElementById('chart-election-title').innerText = activeCamp.title;
-
-            const labels = activeCamp.candidates.map(c => c.name);
-            const data = activeCamp.candidates.map(c => c.votes);
-
-            if (chartInstance) chartInstance.destroy();
-
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Votes Verified',
-                        data: data,
-                        backgroundColor: ['rgba(16, 185, 129, 0.6)', 'rgba(6, 182, 212, 0.6)', 'rgba(99, 102, 241, 0.6)'],
-                        borderColor: ['#10b981', '#06b6d4', '#6366f1'],
-                        borderWidth: 1.5,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#94a3b8' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#f8fafc' }
-                        }
-                    }
-                }
-            });
-        }
-
-        // CREATE CAMPAIGN FORM HANDLING
-        function setupDefaultCandidateInputs() {
-            const container = document.getElementById('candidates-input-container');
-            if (!container) return;
-            container.innerHTML = '';
-            addCandidateInput("David Chen", "Computer Science Dept");
-            addCandidateInput("Sarah Jenkins", "Electrical Engineering");
-        }
-
-        function addCandidateInput(name = '', bio = '') {
-            const container = document.getElementById('candidates-input-container');
-            const count = container.children.length + 1;
-            const div = document.createElement('div');
-            div.className = "candidate-input-row bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3";
-            div.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-slate-400">Candidate #${count}</span>
-                    ${count > 2 ? `<button type="button" onclick="this.parentElement.parentElement.remove()" class="text-xs text-red-400 hover:underline">Remove</button>` : ''}
-                </div>
-                <input type="text" required placeholder="Candidate Full Name" value="${name}" class="cand-name w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-white">
-                <input type="text" required placeholder="Short Manifesto / Bio" value="${bio}" class="cand-bio w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-white">
-            `;
-            container.appendChild(div);
-        }
-
-        function handleCreateCampaign(e) {
-            e.preventDefault();
-            
-            if (!currentUser) {
-                showToast("Please sign in before publishing a campaign.", "error");
-                openAuthModal();
-                return;
-            }
-
-            const instName = document.getElementById('form-inst-name').value;
-            const title = document.getElementById('form-title').value;
-            const start = document.getElementById('form-start').value;
-            const end = document.getElementById('form-end').value;
-            const video = document.getElementById('form-video').value;
-
-            const candRows = document.querySelectorAll('.candidate-input-row');
-            const candidates = [];
-
-            candRows.forEach((row, index) => {
-                const name = row.querySelector('.cand-name').value;
-                const bio = row.querySelector('.cand-bio').value;
-                candidates.push({
-                    id: `cand-user-${Date.now()}-${index}`,
-                    name: name,
-                    bio: bio,
-                    avatar: name,
-                    votes: 0
-                });
-            });
-
-            const newCampaign = {
-                id: `camp-${Date.now()}`,
-                institution: instName,
-                title: title,
-                startDate: start,
-                endDate: end,
-                videoUrl: video,
-                candidates: candidates,
-                createdBy: currentUser.name,
-                creatorIsFounder: currentUser.isFounder
-            };
-
-            campaigns.unshift(newCampaign);
-            localStorage.setItem('dv_campaigns', JSON.stringify(campaigns));
-
-            showToast("Election Campaign successfully published!", "success");
-            switchView('explore');
-        }
-
-        function copyPromoLink(campId) {
-            const url = `${window.location.origin}${window.location.pathname}#${campId}`;
-            navigator.clipboard.writeText(url).then(() => {
-                showToast("Shareable campaign link copied to clipboard!", "info");
-            });
-        }
-
-        // UTILITIES
-        function showToast(message, type = "info") {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-
-            const toast = document.createElement('div');
-            const bgClass = type === 'success' ? 'bg-emerald-500 text-slate-950 font-bold' : type === 'error' ? 'bg-red-500 text-white font-bold' : 'bg-slate-800 text-white border border-slate-700';
-
-            toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-xl text-xs flex items-center gap-2 transition-all duration-300 transform translate-y-2 opacity-0 ${bgClass}`;
-            toast.innerHTML = `<span>${message}</span>`;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-    </script>
+<body class="min-h-screen flex flex-col">
+
+<header class="sticky top-0 z-40 glass border-b border-white/5">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+<div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="switchView('explore')">
+<div class="w-11 h-11 rounded-xl btn-p flex items-center justify-center"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+<div class="hidden xs:block"><div class="disp text-xl sm:text-2xl font-bold leading-none">Decentra<span class="grad">Vote</span></div>
+<div class="text-[10px] tracking-wide font-medium" style="color:#a5b0f8b3">Blockchain Institutional Voting</div></div>
+</div>
+<div class="hidden md:block flex-1 max-w-sm">
+<div class="relative"><i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2" style="color:var(--dim2)"></i>
+<input id="global-search" onkeyup="handleGlobalSearch()" placeholder="Search institution or election..." class="inp w-full pl-10 pr-4 py-2.5 text-sm"></div>
+</div>
+<nav class="flex items-center gap-1">
+<button onclick="switchView('explore')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/5 transition hidden sm:inline-block">Explore</button>
+<button onclick="switchView('create')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/5 transition hidden sm:inline-block">Create</button>
+<button onclick="switchView('ledger')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/5 transition hidden sm:inline-block">Ledger</button>
+<button onclick="switchView('founder')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/5 transition hidden sm:inline-block">Founders</button>
+<div id="user-nav" class="pl-2 ml-1 border-l border-white/10"></div>
+</nav>
+</div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+<section id="view-explore" class="view fadein">
+<div class="relative rounded-3xl p-8 sm:p-12 mb-8 overflow-hidden glass border border-indigo-500/15">
+<div class="absolute -right-16 -top-16 w-80 h-80 rounded-full blur-3xl pointer-events-none" style="background:radial-gradient(circle,rgba(99,102,241,.2),transparent 70%)"></div>
+<div class="max-w-2xl relative">
+<span class="pill pill-live mb-4"><span class="dotp"></span>Tamper-proof, cryptographically verified ballots</span>
+<h1 class="disp text-3xl sm:text-5xl font-bold leading-tight mb-4">Institutional elections you can <span class="grad">verify</span></h1>
+<p style="color:var(--dim)" class="text-base sm:text-lg mb-8 leading-relaxed max-w-xl">Every ballot is hashed, chained and timestamped. Universities, clubs and organizations run transparent elections with instant, auditable results.</p>
+<div class="flex flex-wrap gap-3">
+<button onclick="switchView('create')" class="btn-p px-6 py-3 rounded-xl flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i>Launch an election</button>
+<button onclick="switchView('founder')" class="btn-g px-6 py-3 rounded-xl font-semibold flex items-center gap-2"><i data-lucide="award" class="w-5 h-5" style="color:var(--gold)"></i>Founder directory</button>
+</div></div></div>
+
+<div id="stats-strip" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8"></div>
+
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+<div><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="vote" class="w-5 h-5" style="color:var(--indigo)"></i>Active campaigns</h2>
+<p class="text-xs mt-0.5" style="color:var(--dim)">Pick an election to review candidates and cast your ballot.</p></div>
+<div class="flex items-center gap-1 glass p-1.5 rounded-xl w-full sm:w-auto overflow-x-auto">
+<button onclick="filterCampaigns('all')" id="filter-all" class="tab-btn">All</button>
+<button onclick="filterCampaigns('live')" id="filter-live" class="tab-btn">Live</button>
+<button onclick="filterCampaigns('upcoming')" id="filter-upcoming" class="tab-btn">Upcoming</button>
+<button onclick="filterCampaigns('completed')" id="filter-completed" class="tab-btn">Completed</button>
+</div></div>
+<div id="campaigns-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
+<section id="view-create" class="view hidden">
+<div class="max-w-3xl mx-auto glass p-6 sm:p-10 rounded-3xl">
+<div class="mb-8 border-b border-white/8 pb-6"><h2 class="disp text-2xl font-bold flex items-center gap-2"><i data-lucide="plus-square" class="w-6 h-6" style="color:var(--indigo)"></i>Create an election</h2>
+<p class="text-sm mt-1" style="color:var(--dim)">Configure the timeline, add candidates and publish to the ledger.</p></div>
+<form id="create-form" onsubmit="handleCreateCampaign(event)" class="space-y-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div><label class="block text-xs font-semibold mb-2" style="color:var(--dim)">Institution name</label>
+<input id="f-inst" required placeholder="Stanford University CS Dept" class="inp w-full px-4 py-3 text-sm"></div>
+<div><label class="block text-xs font-semibold mb-2" style="color:var(--dim)">Election title</label>
+<input id="f-title" required placeholder="Student Body President 2026" class="inp w-full px-4 py-3 text-sm"></div></div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div><label class="block text-xs font-semibold mb-2" style="color:var(--dim)">Start date &amp; time</label>
+<input type="datetime-local" id="f-start" required class="inp w-full px-4 py-3 text-sm"></div>
+<div><label class="block text-xs font-semibold mb-2" style="color:var(--dim)">End date &amp; time</label>
+<input type="datetime-local" id="f-end" required class="inp w-full px-4 py-3 text-sm"></div></div>
+<div><label class="block text-xs font-semibold mb-2" style="color:var(--dim)">Promo video URL (optional)</label>
+<input type="url" id="f-video" placeholder="https://www.youtube.com/embed/..." class="inp w-full px-4 py-3 text-sm"></div>
+<div><div class="flex justify-between items-center mb-3"><label class="text-xs font-semibold" style="color:var(--dim)">Candidates</label>
+<button type="button" onclick="addCandidateInput()" class="text-xs font-semibold flex items-center gap-1" style="color:#a5b4fc"><i data-lucide="plus" class="w-4 h-4"></i>Add candidate</button></div>
+<div id="cand-inputs" class="space-y-3"></div></div>
+<div class="pt-4 border-t border-white/8 flex justify-end gap-3">
+<button type="button" onclick="switchView('explore')" class="px-6 py-3 rounded-xl text-sm font-semibold" style="color:var(--dim)">Cancel</button>
+<button type="submit" class="btn-p px-8 py-3 rounded-xl flex items-center gap-2"><i data-lucide="upload-cloud" class="w-4 h-4"></i>Publish election</button>
+</div></form></div></section>
+
+<section id="view-details" class="view hidden"></section>
+
+<section id="view-ledger" class="view hidden">
+<div class="space-y-8">
+<div class="flex flex-wrap justify-between items-end gap-4">
+<div><h2 class="disp text-2xl font-bold flex items-center gap-2"><i data-lucide="line-chart" class="w-6 h-6" style="color:var(--indigo)"></i>Results &amp; audit ledger</h2>
+<p class="text-sm mt-1" style="color:var(--dim)">Immutable record of every SHA-256 encrypted ballot on the chain.</p></div>
+<button onclick="exportLedgerCSV()" class="btn-g px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2"><i data-lucide="download" class="w-4 h-4"></i>Export CSV</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 glass p-6 rounded-3xl"><h3 class="text-lg font-bold mb-4 flex items-center justify-between">Active election tally
+<span id="chart-title" class="text-xs font-mono px-2.5 py-1 rounded-full" style="color:#a5b4fc;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25)">Select</span></h3>
+<div class="relative h-72 w-full"><canvas id="chart"></canvas></div></div>
+<div class="glass p-6 rounded-3xl flex flex-col justify-between">
+<div><h3 class="text-lg font-bold mb-4">Chain health</h3><div class="space-y-3">
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><span class="text-xs" style="color:var(--dim)">Total verified votes</span><div id="stat-votes" class="text-2xl font-extrabold font-mono" style="color:#a5b4fc">0</div></div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><span class="text-xs" style="color:var(--dim)">Current block height</span><div id="stat-block" class="text-2xl font-extrabold font-mono" style="color:var(--violet)">#0</div></div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><span class="text-xs" style="color:var(--dim)">Consensus</span><div class="text-sm font-semibold">Proof of Authority (PoA)</div></div>
+</div></div><div class="mt-6 pt-4 border-t border-white/8 text-xs" style="color:var(--dim2)">Every vote triggers a SHA-256 digest verified by peer nodes.</div></div>
+</div>
+<div class="glass rounded-3xl overflow-hidden">
+<div class="p-6 border-b border-white/8 flex justify-between items-center"><h3 class="text-lg font-bold flex items-center gap-2"><i data-lucide="database" class="w-5 h-5" style="color:var(--violet)"></i>Audit logs</h3>
+<span class="pill pill-live">Live syncing</span></div>
+<div class="overflow-x-auto"><table class="w-full text-left text-xs">
+<thead class="uppercase tracking-wide font-semibold border-b border-white/8" style="color:var(--dim2)"><tr><th class="px-6 py-4">Timestamp</th><th class="px-6 py-4">Block</th><th class="px-6 py-4">Voter hash</th><th class="px-6 py-4">Candidate</th><th class="px-6 py-4">Tx hash</th></tr></thead>
+<tbody id="ledger-body" class="divide-y divide-white/5 font-mono" style="color:#c7cae0"></tbody></table></div></div>
+</div></section>
+
+<section id="view-founder" class="view hidden"><div class="space-y-8">
+<div><div class="flex items-center gap-3"><h2 class="disp text-2xl font-bold">Founder directory</h2>
+<span class="seal inline-flex items-center gap-1 font-bold text-xs px-2.5 py-1 rounded-full"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>Official roster</span></div>
+<p class="text-sm mt-1" style="color:var(--dim)">Platform founders carrying the verified gold-seal badge.</p></div>
+<div id="founder-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+<div class="glass p-6 sm:p-8 rounded-3xl"><h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="shield-alert" class="w-5 h-5" style="color:var(--gold)"></i>Verification rules</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs" style="color:#c7cae0">
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Hardcoded verification</strong>Only pre-registered founder emails qualify for the gold seal across the platform.</div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Persistent session</strong>Once claimed, the seal stays active on campaign creation and votes in this browser.</div>
+<div class="bg-black/20 p-4 rounded-xl border border-white/5"><strong class="block text-sm mb-1">Admin powers</strong>Verified founders can delete any campaign and sign audit transactions.</div>
+</div></div></div></section>
+</main>
+
+<div id="auth-modal" class="modal-wrap hidden" onclick="if(event.target===this)closeAuthModal()">
+<div class="glass w-full max-w-md p-6 sm:p-8 rounded-3xl relative">
+<button onclick="closeAuthModal()" class="absolute top-4 right-4" style="color:var(--dim)"><i data-lucide="x" class="w-5 h-5"></i></button>
+<div class="flex border-b border-white/8 mb-6 gap-2">
+<button onclick="switchAuthTab('user')" id="tab-user" class="tab-btn on flex-1">Voter / manager</button>
+<button onclick="switchAuthTab('founder')" id="tab-founder" class="tab-btn flex-1">Founder claim</button></div>
+<div id="auth-user">
+<p class="text-xs mb-4" style="color:var(--dim)">Sign in to launch elections and cast verified ballots.</p>
+<button onclick="simulateGoogleLogin()" class="btn-g w-full py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 mb-4">
+<svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"/></svg>
+Continue with Google</button>
+<div class="relative flex items-center justify-center my-4"><div class="border-t border-white/8 w-full"></div><span class="px-2 text-[10px] uppercase tracking-widest absolute" style="background:#12142b;color:var(--dim2)">or email</span></div>
+<form onsubmit="handleStandardAuth(event)" class="space-y-3">
+<input id="auth-name" required placeholder="Full name" class="inp w-full px-3.5 py-2.5 text-sm">
+<input id="auth-contact" required placeholder="Email or mobile" class="inp w-full px-3.5 py-2.5 text-sm">
+<button type="submit" class="btn-p w-full py-2.5 rounded-xl text-sm">Sign in / register</button>
+</form></div>
+<div id="auth-founder" class="hidden">
+<div class="p-3 rounded-xl mb-4 text-xs leading-relaxed" style="background:rgba(232,185,63,.1);border:1px solid rgba(232,185,63,.3);color:#f5d998"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i>Enter your pre-registered founder email to claim your profile and gold seal.</div>
+<form onsubmit="handleFounderClaim(event)" class="space-y-3">
+<input type="email" id="claim-email" required placeholder="you@domain.com" class="inp w-full px-3.5 py-2.5 text-sm font-mono">
+<button type="submit" class="btn-p w-full py-2.5 rounded-xl text-sm flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i>Claim founder profile</button>
+</form></div></div></div>
+
+<div id="confirm-modal" class="modal-wrap hidden" onclick="if(event.target===this)closeConfirm()">
+<div class="glass w-full max-w-sm p-6 rounded-3xl">
+<div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background:rgba(248,113,113,.12)"><i data-lucide="alert-triangle" class="w-6 h-6" style="color:var(--danger)"></i></div>
+<h3 id="confirm-title" class="text-lg font-bold mb-1">Delete campaign?</h3>
+<p id="confirm-msg" class="text-sm mb-6" style="color:var(--dim)"></p>
+<div class="flex justify-end gap-3"><button onclick="closeConfirm()" class="px-4 py-2.5 rounded-xl text-sm font-semibold" style="color:var(--dim)">Cancel</button>
+<button onclick="runConfirm()" class="btn-d px-5 py-2.5 rounded-xl text-sm font-bold">Delete</button></div></div></div>
+
+<div id="toast-wrap" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<footer class="border-t border-white/8 glass mt-16 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs" style="color:var(--dim)">
+<div class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4" style="color:var(--indigo)"></i><span>DecentraVote &copy; 2026 &middot; GitHub Pages compatible SPA</span></div>
+<span>Founders: Suprotim, Swarnava, Soham</span></div></footer>
+
+<script>
+const CO_FOUNDERS=[{name:"Suprotim Chatterjee",email:"suprotim2005@gmail.com",role:"Co-Founder & Tech Lead"},{name:"Swarnava",email:"swarnava357@gmail.com",role:"Co-Founder & Web3 Architect"},{name:"Soham",email:"sohamkolay77@gmail.com",role:"Co-Founder & Product Strategist"}];
+const DEFAULT_CAMPAIGNS=[{id:"camp-001",institution:"Apex University Tech Council",title:"Student Body President & Tech Chair 2026",startDate:"2026-09-01T09:00",endDate:"2026-10-15T18:00",videoUrl:"https://www.youtube.com/embed/dQw4w9WgXcQ",createdBy:"Suprotim Chatterjee",creatorIsFounder:true,candidates:[{id:"cand-1",name:"David Chen",bio:"Senior CS major focused on open-source campus lab tools and AI research grants.",avatar:"David",votes:42},{id:"cand-2",name:"Sarah Jenkins",bio:"EE junior advocating for transparent club funding via web3 ledgers.",avatar:"Sarah",votes:38},{id:"cand-3",name:"Marcus Vance",bio:"Information Systems senior prioritizing cybersecurity workshops and mentorship.",avatar:"Marcus",votes:19}]},{id:"camp-002",institution:"Global Web3 Developers Club",title:"Lead Community Steward Election",startDate:"2026-09-20T10:00",endDate:"2026-11-01T20:00",videoUrl:"",createdBy:"Swarnava",creatorIsFounder:true,candidates:[{id:"cand-10",name:"Elena Rostova",bio:"Smart contract developer and hackathon organizer.",avatar:"Elena",votes:85},{id:"cand-20",name:"Kofi Arhin",bio:"DeFi researcher and protocol contributor.",avatar:"Kofi",votes:64}]}];
+let campaigns=JSON.parse(localStorage.getItem('dv_campaigns'))||DEFAULT_CAMPAIGNS;
+let ledgerLogs=JSON.parse(localStorage.getItem('dv_ledger'))||[];
+let currentUser=JSON.parse(localStorage.getItem('dv_user'))||null;
+let votes=JSON.parse(localStorage.getItem('dv_votes'))||{};
+let activeFilter='all',chartInstance=null,confirmCb=null;
+
+window.addEventListener('DOMContentLoaded',()=>{lucide.createIcons();updateUserNav();renderFounders();renderCampaignsGrid();seedLedger();setupDefaultCandidates();document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuthModal();closeConfirm()}})});
+
+function switchView(name,id=null){
+['explore','create','details','ledger','founder'].forEach(v=>document.getElementById('view-'+v).classList.add('hidden'));
+const t=document.getElementById('view-'+name);t.classList.remove('hidden');t.classList.remove('fadein');void t.offsetWidth;t.classList.add('fadein');
+if(name==='details'&&id)renderDetails(id);
+else if(name==='ledger')renderLedger();
+else if(name==='explore')renderCampaignsGrid();
+window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>lucide.createIcons(),50);
+}
+
+function checkIsFounder(email){return !!email&&CO_FOUNDERS.some(f=>f.email.toLowerCase()===email.toLowerCase())}
+function persist(){localStorage.setItem('dv_campaigns',JSON.stringify(campaigns));localStorage.setItem('dv_ledger',JSON.stringify(ledgerLogs));localStorage.setItem('dv_votes',JSON.stringify(votes))}
+function canManage(c){return currentUser&&(currentUser.isFounder||currentUser.name===c.createdBy)}
+function timeLeft(target){const d=new Date(target)-new Date();if(d<=0)return null;const days=Math.floor(d/864e5),hrs=Math.floor(d%864e5/36e5),mins=Math.floor(d%36e5/6e4);return days>0?`${days}d ${hrs}h`:hrs>0?`${hrs}h ${mins}m`:`${mins}m`}
+
+function updateUserNav(){
+const c=document.getElementById('user-nav');
+if(currentUser){
+const isF=checkIsFounder(currentUser.email);
+const seal=isF?`<span class="seal rounded-full p-0.5 inline-flex items-center justify-center ml-1"><i data-lucide="check" class="w-3 h-3 stroke-[3]"></i></span>`:'';
+c.innerHTML=`<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 glass px-3 py-1.5 rounded-xl text-xs font-semibold"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}" class="w-6 h-6 rounded-lg bg-black/30"><span class="flex items-center">${currentUser.name}${seal}</span></div>
+<button onclick="logoutUser()" class="icn-btn" style="color:var(--dim)" title="Sign out"><i data-lucide="log-out" class="w-4 h-4"></i></button></div>`;
+}else{
+c.innerHTML=`<button onclick="openAuthModal()" class="btn-p px-4 py-2 rounded-xl text-sm flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i>Sign in</button>`;
+}
+lucide.createIcons();
+}
+function openAuthModal(){document.getElementById('auth-modal').classList.remove('hidden')}
+function closeAuthModal(){document.getElementById('auth-modal').classList.add('hidden')}
+function switchAuthTab(tab){
+document.getElementById('tab-user').classList.toggle('on',tab==='user');
+document.getElementById('tab-founder').classList.toggle('on',tab==='founder');
+document.getElementById('auth-user').classList.toggle('hidden',tab!=='user');
+document.getElementById('auth-founder').classList.toggle('hidden',tab!=='founder');
+}
+function handleStandardAuth(e){e.preventDefault();const name=document.getElementById('auth-name').value,contact=document.getElementById('auth-contact').value;
+currentUser={name,email:contact,isFounder:checkIsFounder(contact)};localStorage.setItem('dv_user',JSON.stringify(currentUser));updateUserNav();closeAuthModal();showToast(`Welcome, ${currentUser.name}!`,"success");}
+function simulateGoogleLogin(){currentUser={name:"Alex Mercer",email:"alex.mercer@gmail.com",isFounder:false};localStorage.setItem('dv_user',JSON.stringify(currentUser));updateUserNav();closeAuthModal();showToast("Authenticated via Google","success");}
+function handleFounderClaim(e){e.preventDefault();claimAdminDirect(document.getElementById('claim-email').value.trim());}
+function claimAdminDirect(email,nameOverride=null){
+const f=CO_FOUNDERS.find(x=>x.email.toLowerCase()===email.toLowerCase());
+if(f){currentUser={name:nameOverride||f.name,email:f.email,isFounder:true};localStorage.setItem('dv_user',JSON.stringify(currentUser));updateUserNav();closeAuthModal();showToast("Founder profile claimed — gold seal active","success");switchView('founder');}
+else showToast("Email not found in founder registry","error");
+}
+function logoutUser(){currentUser=null;localStorage.removeItem('dv_user');updateUserNav();showToast("Signed out","info");}
+
+function renderFounders(){
+document.getElementById('founder-grid').innerHTML=CO_FOUNDERS.map(f=>`
+<div class="card p-6 relative overflow-hidden">
+<div class="flex items-start gap-4"><div class="relative"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${f.name}" class="w-16 h-16 rounded-2xl bg-black/30 p-1 border border-white/10">
+<div class="absolute -bottom-1 -right-1 seal rounded-full p-1"><i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i></div></div>
+<div><h3 class="text-lg font-bold">${f.name}</h3><p class="text-xs font-semibold mb-1" style="color:var(--gold)">${f.role}</p><p class="text-xs font-mono" style="color:var(--dim)">${f.email}</p></div></div>
+<div class="mt-6 pt-4 border-t border-white/8 flex items-center justify-between text-xs" style="color:var(--dim)"><span>Status: <strong style="color:var(--gold)">Verified admin</strong></span>
+<button onclick="claimAdminDirect('${f.email}','${f.name}')" class="hover:underline" style="color:#a5b4fc">Claim profile</button></div></div>`).join('');
+lucide.createIcons();
+}
+
+function filterCampaigns(status){activeFilter=status;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));const b=document.getElementById('filter-'+status);if(b)b.classList.add('on');renderCampaignsGrid();}
+
+function updateStats(){
+const total=campaigns.length,now=new Date();
+const live=campaigns.filter(c=>now>=new Date(c.startDate)&&now<=new Date(c.endDate)).length;
+const totalVotes=campaigns.reduce((a,c)=>a+c.candidates.reduce((s,x)=>s+x.votes,0),0);
+const insts=new Set(campaigns.map(c=>c.institution)).size;
+const items=[["layers",total,"Elections"],["radio",live,"Live now"],["lock",totalVotes,"Votes cast"],["building-2",insts,"Institutions"]];
+document.getElementById('stats-strip').innerHTML=items.map(([icon,val,label])=>`
+<div class="glass rounded-2xl p-4 flex items-center gap-3"><div class="icn-btn" style="background:rgba(99,102,241,.12);color:#a5b4fc"><i data-lucide="${icon}" class="w-4 h-4"></i></div>
+<div><div class="text-xl font-extrabold font-mono leading-none">${val}</div><div class="text-[11px]" style="color:var(--dim)">${label}</div></div></div>`).join('');
+lucide.createIcons();
+}
+
+function renderCampaignsGrid(q=''){
+const grid=document.getElementById('campaigns-grid');updateStats();
+const now=new Date();
+let list=campaigns.filter(c=>{
+const m=c.title.toLowerCase().includes(q.toLowerCase())||c.institution.toLowerCase().includes(q.toLowerCase());
+const s=new Date(c.startDate),e=new Date(c.endDate);
+if(activeFilter==='live')return m&&now>=s&&now<=e;
+if(activeFilter==='upcoming')return m&&now<s;
+if(activeFilter==='completed')return m&&now>e;
+return m;
+});
+if(!list.length){grid.innerHTML=`<div class="col-span-full py-14 text-center glass rounded-3xl"><i data-lucide="inbox" class="w-10 h-10 mx-auto mb-3" style="color:var(--dim2)"></i><p class="text-sm" style="color:var(--dim)">No campaigns match this view.</p></div>`;lucide.createIcons();return;}
+grid.innerHTML=list.map(c=>{
+const s=new Date(c.startDate),e=new Date(c.endDate),isLive=now>=s&&now<=e,upcoming=now<s;
+let badge,tl='';
+if(isLive){badge=`<span class="pill pill-live"><span class="dotp"></span>Live</span>`;tl=timeLeft(c.endDate);tl=tl?`${tl} left`:'';}
+else if(upcoming){badge=`<span class="pill pill-up">Upcoming</span>`;tl=timeLeft(c.startDate);tl=tl?`Starts in ${tl}`:'';}
+else{badge=`<span class="pill pill-done">Completed</span>`;}
+const tot=c.candidates.reduce((a,x)=>a+x.votes,0);
+const seal=c.creatorIsFounder?`<span class="seal rounded-full p-0.5 inline-flex ml-1"><i data-lucide="check" class="w-2.5 h-2.5 stroke-[3]"></i></span>`:'';
+const del=canManage(c)?`<button onclick="event.stopPropagation();deleteCampaign('${c.id}')" class="icn-btn btn-d" title="Delete campaign"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:'';
+return `<div onclick="switchView('details','${c.id}')" class="card p-6 cursor-pointer flex flex-col justify-between">
+<div><div class="flex justify-between items-start mb-3 gap-2"><span class="text-xs font-bold uppercase tracking-wide" style="color:var(--dim2)">${c.institution}</span><div class="flex items-center gap-2">${badge}${del}</div></div>
+<h3 class="text-lg font-bold leading-snug mb-2">${c.title}</h3>
+${tl?`<p class="text-xs mb-3 flex items-center gap-1" style="color:var(--gold)"><i data-lucide="clock" class="w-3 h-3"></i>${tl}</p>`:''}
+<div class="text-xs space-y-1.5 mb-6" style="color:var(--dim)"><div class="flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i>${c.candidates.length} candidates</div>
+<div class="flex items-center gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5"></i>${tot} encrypted votes</div></div></div>
+<div class="pt-4 border-t border-white/8 flex items-center justify-between text-xs" style="color:var(--dim)"><span class="flex items-center">By ${c.createdBy}${seal}</span>
+<span class="font-semibold flex items-center gap-1" style="color:#a5b4fc">Open ballot <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span></div></div>`;
+}).join('');
+lucide.createIcons();
+}
+function handleGlobalSearch(){renderCampaignsGrid(document.getElementById('global-search').value);}
+
+function renderDetails(id){
+const c=campaigns.find(x=>x.id===id),el=document.getElementById('view-details');
+if(!c){el.innerHTML='';return;}
+const now=new Date(),s=new Date(c.startDate),e=new Date(c.endDate),isLive=now>=s&&now<=e,upcoming=now<s;
+const tot=c.candidates.reduce((a,x)=>a+x.votes,0);
+const voteKey=currentUser?`${currentUser.email}|${c.id}`:null;
+const votedFor=voteKey?votes[voteKey]:null;
+let status=isLive?`<span style="color:var(--gold)">${timeLeft(c.endDate)||'Closing'} remaining</span>`:upcoming?`<span style="color:var(--amber)">Starts in ${timeLeft(c.startDate)||'soon'}</span>`:`<span style="color:var(--dim)">Election closed</span>`;
+el.innerHTML=`<div class="space-y-8">
+<div class="flex items-center justify-between"><button onclick="switchView('explore')" class="text-xs font-semibold flex items-center gap-1" style="color:var(--dim)"><i data-lucide="arrow-left" class="w-4 h-4"></i>All campaigns</button>
+<div class="flex items-center gap-3"><span class="text-xs font-mono" style="color:var(--dim2)">ID: ${c.id}</span>${canManage(c)?`<button onclick="deleteCampaign('${c.id}')" class="btn-d px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button>`:''}</div></div>
+<div class="glass p-6 sm:p-10 rounded-3xl"><span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color:#a5b4fc">${c.institution}</span>
+<h1 class="disp text-2xl sm:text-4xl font-bold mb-4">${c.title}</h1>
+<div class="flex flex-wrap items-center gap-3 text-xs" style="color:var(--dim)">
+<span class="bg-black/20 px-3 py-1.5 rounded-lg border border-white/8">${status}</span>
+<span class="bg-black/20 px-3 py-1.5 rounded-lg border border-white/8">Ends ${e.toLocaleString()}</span>
+<span class="bg-black/20 px-3 py-1.5 rounded-lg border border-white/8">Total votes: <strong class="font-mono" style="color:#a5b4fc">${tot}</strong></span></div></div>
+${c.videoUrl?`<div class="glass p-6 rounded-3xl"><h3 class="text-sm font-bold uppercase tracking-wide mb-4 flex items-center gap-2" style="color:var(--dim)"><i data-lucide="video" class="w-4 h-4" style="color:#a5b4fc"></i>Promotional media</h3>
+<div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/40 border border-white/8"><iframe src="${c.videoUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe></div></div>`:''}
+<div><h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5" style="color:#a5b4fc"></i>Candidates</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">${c.candidates.map(cand=>{
+const pct=tot>0?Math.round(cand.votes/tot*100):0;
+const isMine=votedFor===cand.id;
+let btnLabel,btnDisabled=true,btnCls='btn-g';
+if(!isLive)btnLabel=upcoming?'Not open yet':'Voting closed';
+else if(votedFor)btnLabel=isMine?'✓ Your vote':'Vote locked';
+else{btnLabel='Cast encrypted vote';btnDisabled=false;btnCls='btn-p';}
+return `<div class="card p-6 flex flex-col justify-between ${isMine?'border-color:var(--gold)':''}">
+<div><div class="flex items-center gap-4 mb-3"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cand.avatar)}" class="w-16 h-16 rounded-2xl bg-black/30 p-1 border border-white/10">
+<div><h4 class="text-lg font-bold flex items-center gap-2">${cand.name}${isMine?'<span class="seal rounded-full px-1.5 py-0.5 text-[9px] font-bold">YOUR VOTE</span>':''}</h4>
+<span class="text-xs font-mono" style="color:#a5b4fc">${cand.votes} votes · ${pct}%</span></div></div>
+<div class="bar mb-3"><div class="bar-f" style="width:${pct}%"></div></div>
+<p class="text-xs leading-relaxed mb-5 bg-black/20 p-3 rounded-xl border border-white/5" style="color:#c7cae0">${cand.bio}</p></div>
+<button onclick="castVote('${c.id}','${cand.id}')" ${btnDisabled?'disabled':''} class="${btnCls} w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i>${btnLabel}</button></div>`;
+}).join('')}</div></div>
+<div class="glass p-6 rounded-3xl"><h3 class="text-sm font-bold uppercase tracking-wide mb-2 flex items-center gap-2" style="color:var(--dim)"><i data-lucide="share-2" class="w-4 h-4" style="color:var(--violet)"></i>Share this election</h3>
+<div id="promo-card" class="p-6 rounded-2xl border border-indigo-500/25 text-center" style="background:linear-gradient(160deg,rgba(99,102,241,.08),rgba(168,85,247,.05))">
+<i data-lucide="shield-check" class="w-10 h-10 mx-auto mb-2" style="color:#a5b4fc"></i><h4 class="disp text-lg font-bold">${c.title}</h4><p class="text-xs font-semibold mb-2" style="color:#a5b4fc">${c.institution}</p>
+<p class="text-[10px] font-mono" style="color:var(--dim2)">Cast your cryptographic vote on the DecentraVote ledger.</p></div>
+<button onclick="copyPromoLink('${c.id}')" class="btn-g mt-4 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Copy share link</button></div>
+</div>`;
+lucide.createIcons();
+}
+
+async function castVote(campId,candId){
+if(!currentUser){showToast("Sign in before voting","error");openAuthModal();return;}
+const c=campaigns.find(x=>x.id===campId);if(!c)return;
+const now=new Date();if(!(now>=new Date(c.startDate)&&now<=new Date(c.endDate))){showToast("This election is not open for voting","error");return;}
+const key=`${currentUser.email}|${campId}`;if(votes[key]){showToast("You already voted in this election","error");return;}
+const cand=c.candidates.find(x=>x.id===candId);if(!cand)return;
+cand.votes+=1;votes[key]=candId;persist();
+const ts=new Date().toISOString(),raw=`${currentUser.email}-${campId}-${candId}-${ts}-${Math.random()}`;
+const voterHash=await sha256(currentUser.email),txHash=await sha256(raw);
+ledgerLogs.unshift({timestamp:new Date().toLocaleTimeString(),blockHeight:`#${18400+ledgerLogs.length+1}`,voterHash:`0x${voterHash.slice(0,12)}...`,candidateName:cand.name,txHash:`0x${txHash}`});
+persist();
+showToast(`Vote for ${cand.name} verified on chain`,"success");
+renderDetails(campId);
+}
+async function sha256(msg){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function seedLedger(){if(!ledgerLogs.length){ledgerLogs=[{timestamp:"10:14:22 AM",blockHeight:"#18402",voterHash:"0x8f2a99c1...",candidateName:"David Chen",txHash:"0xa9f7823c4e112001e89"},{timestamp:"09:48:10 AM",blockHeight:"#18401",voterHash:"0x3d41e72a...",candidateName:"Sarah Jenkins",txHash:"0xb7c102948123ee901fa"},{timestamp:"08:30:05 AM",blockHeight:"#18400",voterHash:"0xe29124bb...",candidateName:"Elena Rostova",txHash:"0xc8891024bcda129038d"}];localStorage.setItem('dv_ledger',JSON.stringify(ledgerLogs));}}
+
+function deleteCampaign(id){
+const c=campaigns.find(x=>x.id===id);if(!c)return;
+if(!canManage(c)){showToast("Only the creator or a founder can delete this campaign","error");return;}
+document.getElementById('confirm-title').textContent='Delete campaign?';
+document.getElementById('confirm-msg').textContent=`"${c.title}" and its vote history will be permanently removed. This cannot be undone.`;
+confirmCb=()=>{campaigns=campaigns.filter(x=>x.id!==id);persist();showToast("Campaign deleted","info");switchView('explore');};
+document.getElementById('confirm-modal').classList.remove('hidden');lucide.createIcons();
+}
+function closeConfirm(){document.getElementById('confirm-modal').classList.add('hidden');confirmCb=null;}
+function runConfirm(){if(confirmCb)confirmCb();closeConfirm();}
+
+function renderLedger(){
+document.getElementById('ledger-body').innerHTML=ledgerLogs.map(l=>`<tr class="hover:bg-white/5 transition"><td class="px-6 py-4">${l.timestamp}</td><td class="px-6 py-4 font-bold" style="color:#a5b4fc">${l.blockHeight}</td><td class="px-6 py-4">${l.voterHash}</td><td class="px-6 py-4 font-semibold" style="color:var(--tx)">${l.candidateName}</td><td class="px-6 py-4 text-[10px] break-all" style="color:var(--dim2)">${l.txHash}</td></tr>`).join('');
+document.getElementById('stat-votes').textContent=campaigns.reduce((a,c)=>a+c.candidates.reduce((s,x)=>s+x.votes,0),0);
+document.getElementById('stat-block').textContent=`#${18400+ledgerLogs.length}`;
+renderChart();
+}
+function renderChart(){
+const ctx=document.getElementById('chart');if(!ctx||!campaigns.length)return;
+const c=campaigns[0];document.getElementById('chart-title').textContent=c.title;
+if(chartInstance)chartInstance.destroy();
+chartInstance=new Chart(ctx,{type:'bar',data:{labels:c.candidates.map(x=>x.name),datasets:[{label:'Votes',data:c.candidates.map(x=>x.votes),backgroundColor:['rgba(99,102,241,.65)','rgba(168,85,247,.65)','rgba(232,185,63,.55)'],borderColor:['#6366f1','#a855f7','#e8b93f'],borderWidth:1.5,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#9296ba'}},x:{grid:{display:false},ticks:{color:'#f2f3fb'}}}}});
+}
+function exportLedgerCSV(){
+const rows=[["Timestamp","Block","VoterHash","Candidate","TxHash"],...ledgerLogs.map(l=>[l.timestamp,l.blockHeight,l.voterHash,l.candidateName,l.txHash])];
+const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+const blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');
+a.href=URL.createObjectURL(blob);a.download='decentravote_ledger.csv';a.click();URL.revokeObjectURL(a.href);
+showToast("Ledger exported as CSV","info");
+}
+
+function setupDefaultCandidates(){const c=document.getElementById('cand-inputs');c.innerHTML='';addCandidateInput("David Chen","Computer Science Dept");addCandidateInput("Sarah Jenkins","Electrical Engineering");}
+function addCandidateInput(name='',bio=''){
+const c=document.getElementById('cand-inputs'),n=c.children.length+1,row=document.createElement('div');
+row.className="bg-black/20 p-4 rounded-xl border border-white/8 space-y-3 cand-row";
+row.innerHTML=`<div class="flex justify-between items-center"><span class="text-xs font-bold" style="color:var(--dim)">Candidate #${n}</span>${n>2?`<button type="button" onclick="this.closest('.cand-row').remove()" class="text-xs font-semibold" style="color:var(--danger)">Remove</button>`:''}</div>
+<input required placeholder="Full name" value="${name}" class="cand-name inp w-full px-3 py-2 text-xs">
+<input required placeholder="Short manifesto" value="${bio}" class="cand-bio inp w-full px-3 py-2 text-xs">`;
+c.appendChild(row);
+}
+function handleCreateCampaign(e){
+e.preventDefault();
+if(!currentUser){showToast("Sign in before publishing a campaign","error");openAuthModal();return;}
+const rows=document.querySelectorAll('.cand-row');
+const candidates=Array.from(rows).map((r,i)=>({id:`cand-user-${Date.now()}-${i}`,name:r.querySelector('.cand-name').value,bio:r.querySelector('.cand-bio').value,avatar:r.querySelector('.cand-name').value||`c${i}`,votes:0}));
+campaigns.unshift({id:`camp-${Date.now()}`,institution:document.getElementById('f-inst').value,title:document.getElementById('f-title').value,startDate:document.getElementById('f-start').value,endDate:document.getElementById('f-end').value,videoUrl:document.getElementById('f-video').value,candidates,createdBy:currentUser.name,creatorIsFounder:currentUser.isFounder});
+persist();
+showToast("Election published","success");
+switchView('explore');
+}
+function copyPromoLink(id){
+const url=`${location.origin}${location.pathname}#${id}`;
+if(navigator.share){navigator.share({title:'DecentraVote election',url}).catch(()=>{});}
+else navigator.clipboard.writeText(url).then(()=>showToast("Share link copied","info"));
+}
+function showToast(msg,type='info'){
+const wrap=document.getElementById('toast-wrap');
+const icon=type==='success'?'check-circle':type==='error'?'x-circle':'info';
+const style=type==='success'?'background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff':type==='error'?'background:#f87171;color:#1a0505':'background:#161933;color:#f2f3fb;border:1px solid var(--bd)';
+const t=document.createElement('div');
+t.className="pointer-events-auto px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 transition-all duration-300 transform translate-y-2 opacity-0";
+t.style.cssText=style;
+t.innerHTML=`<i data-lucide="${icon}" class="w-4 h-4"></i><span>${msg}</span>`;
+wrap.appendChild(t);lucide.createIcons();
+setTimeout(()=>t.classList.remove('translate-y-2','opacity-0'),10);
+setTimeout(()=>{t.classList.add('opacity-0','translate-y-2');setTimeout(()=>t.remove(),300);},3500);
+}
+</script>
 </body>
 </html>
